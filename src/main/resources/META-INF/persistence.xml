@@ -1,0 +1,25 @@
+<persistence xmlns="https://jakarta.ee/xml/ns/persistence"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence https://jakarta.ee/xml/ns/persistence/persistence_3_0.xsd"
+  version="3.0">
+  <persistence-unit name="example-jpa-app" transaction-type="RESOURCE_LOCAL">
+    <class>org.irlab.model.entities.User</class>
+    <class>org.irlab.model.entities.Role</class>
+    <!-- <exclude-unlisted-classes>false</exclude-unlisted-classes> -->
+    <properties>
+      <property name="jakarta.persistence.jdbc.driver" value="org.apache.derby.iapi.jdbc.AutoloadedDriver" />
+      <!-- Database in disk. It persists between executions -->
+      <property name="jakarta.persistence.jdbc.url" value="jdbc:derby:sampleDb;create=true" />
+      <!-- Database in memory. Data is lost when the application closes-->
+      <!-- <property name="jakarta.persistence.jdbc.url" value="jdbc:derby:memory:sampleDb;create=true" /> -->
+      <property name="jakarta.persistence.jdbc.user" value="user" />
+      <property name="jakarta.persistence.jdbc.password" value="test" />
+      <!--  EclipseLink should create the database schema automatically  -->
+      <property name="eclipselink.ddl-generation" value="create-or-extend-tables" />
+      <property name="eclipselink.ddl-generation.output-mode" value="database" />
+      <property name="eclipselink.target-database" value="Derby"/>     
+      <!-- EclipseLink logs into a log file -->
+      <property name="eclipselink.logging.file" value="eclipselink.log" />
+    </properties>
+  </persistence-unit>
+</persistence>
