@@ -166,7 +166,14 @@
                             <basedir>${basedir}/src/main/resources/sql/</basedir>
                             <includes>
                             	<include>insert_roles.sql</include>
-								<include>insert_users.sql</include>
+				<include>insert_users.sql</include>
+				<include>insert_clientes.sql</include>
+				<include>insert_vehiculos.sql</include>
+				<include>insert_elevadores.sql</include>
+				<include>insert_tipos.sql</include>
+				<include>insert_trabajos.sql</include>
+				<include>insert_tareas_mecanicos.sql</include>
+				<include>insert_tareas.sql</include>
                             </includes>
                         </fileset>
                     </configuration>

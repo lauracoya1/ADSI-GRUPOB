@@ -89,19 +89,44 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
+  public boolean checkCredentials(@Nonnull String name, @Nonnull String password){
+      Preconditions.checkNotNull(name, "name cannot be null");
+      Preconditions.checkNotNull(password, "greeting cannot be null");
+      if (name.equals("") || password.equals("")){ 
+          return false;
+      }
+      EntityManager em = AppEntityManagerFactory.getInstance().createEntityManager();
+      try {
+          boolean correctPassword = UserDao
+              .findByName(em, name)
+              .map(u -> {
+                  return password.equals(u.getPassword());
+              }).orElseThrow(() -> new UserNotFoundException(String.format("with name %s", name)));
+
+          return correctPassword;
+      } catch (UserNotFoundException e) {
+          return false;
+      } catch (Exception e) {
+          throw e;
+      } finally {
+          em.close();
+      }
+  }
+
+  @Override
   public List<User> listAllUsers() {
-    EntityManager em = AppEntityManagerFactory.getInstance().createEntityManager();
-    try {
-      List<User> userList = UserDao.getAllUsers(em);
-      em.getTransaction().begin();
-      em.getTransaction().commit();
-      return userList;
-    } catch (Exception e) {
-      em.getTransaction().rollback();
-      throw e;
-    } finally {
-      em.close();
-    }
+      EntityManager em = AppEntityManagerFactory.getInstance().createEntityManager();
+      try {
+          List<User> userList = UserDao.getAllUsers(em);
+          em.getTransaction().begin();
+          em.getTransaction().commit();
+          return userList;
+      } catch (Exception e) {
+          em.getTransaction().rollback();
+          throw e;
+      } finally {
+          em.close();
+      }
 
   }
 

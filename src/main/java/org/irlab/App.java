@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Scanner;
 
 import org.irlab.common.AppEntityManagerFactory;
-import org.irlab.model.daos.UserDao;
 import org.irlab.model.entities.User;
 import org.irlab.model.exceptions.UserNotFoundException;
 import org.irlab.model.services.UserService;
@@ -136,6 +135,8 @@ public class App {
 
     private static String whoAreYou(){
         List<User> usersList = userService.listAllUsers();
+        String currentUser = "";
+        String password = "";
         System.out.println();
 
         for (User user : usersList) {
@@ -143,9 +144,12 @@ public class App {
 
         }
         System.out.println();
-        String currentUser = readInput("Dime quién eres: ", "You must supply a user name");
-        return currentUser;
+        while (!userService.checkCredentials(currentUser, password)){
+            currentUser = readInput("Dime quién eres: ", "You must supply a user name");
+            password = readInput("Contraseña: ", "You must supply a valid password");
+        }
 
+        return currentUser;
     }
 
     public static void main(String[] args) throws SQLException {

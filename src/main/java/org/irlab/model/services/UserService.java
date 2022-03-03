@@ -42,5 +42,17 @@ public interface UserService {
    */
   void setUserGreeting(String name, String greeting) throws UserNotFoundException;
 
+  /**
+   * Check user credentials 
+   *
+   * @param name     the name of the user
+   * @param password the password of the user
+   *
+   * @return boolean indicating if credentials are correct
+   */
+  boolean checkCredentials(String name, String password);
+
+
+
   List<User> listAllUsers();
 }

@@ -16,6 +16,9 @@
 
 package org.irlab.model.entities;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -23,6 +26,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 
 /* Need to specify a different table name as user is a built-in function in
@@ -39,44 +43,65 @@ public class User {
   @ManyToOne
   @JoinColumn(name="user_role", nullable=false)
   private Role role;
+
+  @ManyToMany(mappedBy = "mecanicos")
+  Set<Tarea> tareas;
+
+
   private String greeting;
+  private String password;
 
   public User() {
+      this.tareas = new HashSet<Tarea>();
   }
 
   public User(String name, String greeting, Role role) {
-    this.name = name;
-    this.greeting = greeting;
-    this.role = role;
+      this.tareas = new HashSet<Tarea>();
+
+      this.name = name;
+      this.greeting = greeting;
+      this.role = role;
   }
 
   public Long getId() {
-    return id;
+      return id;
   }
 
   public String getName() {
-    return name;
+      return name;
   }
 
 
   public String getGreeting() {
-    return greeting;
+      return greeting;
   }
 
   public void setGreeting(String greeting) {
-    this.greeting = greeting;
+      this.greeting = greeting;
   }
 
   public Role getRole() {
-	return role;
+      return role;
   }
 
   public void setRole(Role role) {
-	this.role = role;
+      this.role = role;
+  }
+
+  public String getPassword() {
+      return password;
+  }
+
+  public void setPassword(String password) {
+      this.password = password;
+  }
+
+  public Set<Tarea> getTareas() {
+      return tareas;
   }
 
   @Override
   public String toString() {
-    return "User(name=" + name + ", greeting=" + greeting + ")";
+      return "User(name=" + name + ", greeting=" + greeting + ")";
   }
 }
