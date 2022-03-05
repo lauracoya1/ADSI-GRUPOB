@@ -16,6 +16,7 @@
 
 package org.irlab.model.services;
 
+import org.irlab.model.entities.Tarea;
 import org.irlab.model.entities.User;
 import org.irlab.model.exceptions.UserNotFoundException;
 
@@ -55,4 +56,6 @@ public interface UserService {
 
 
   List<User> listAllUsers();
+
+  List<Tarea> showHorario();
 }

@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Scanner;
 
 import org.irlab.common.AppEntityManagerFactory;
+import org.irlab.model.entities.Tarea;
 import org.irlab.model.entities.User;
 import org.irlab.model.exceptions.UserNotFoundException;
 import org.irlab.model.services.UserService;
@@ -31,7 +32,7 @@ public class App {
 
 
     private enum Command {
-        GREET_USER, CHANGE_GREETING, CLOSE_SESSION, EXIT
+        GREET_USER, CHANGE_GREETING, CLOSE_SESSION, SHOW_SCHEDULE, EXIT
     }
 
     private static final int CORRECT_SHUTDOWN = 50000;
@@ -61,6 +62,8 @@ public class App {
         System.out.println("  1) Greet user");
         System.out.println("  2) Change user greeting");
         System.out.println("  3) Close user session");
+        System.out.println("  4) Show schedule");
+
         System.out.println();
         System.out.println("  q) Exit");
         System.out.println();
@@ -79,6 +82,8 @@ public class App {
                         return Command.CHANGE_GREETING;
                     case '3':
                         return Command.CLOSE_SESSION;
+                    case '4':
+                        return Command.SHOW_SCHEDULE;
                     case 'q':
                         return Command.EXIT;
                     default:
@@ -152,6 +157,27 @@ public class App {
         return currentUser;
     }
 
+    private static void showSchedule(){
+        List<Tarea> tareaList = userService.showHorario();
+
+        System.out.println();
+
+        for (Tarea tarea : tareaList) {
+            System.out.println();
+            System.out.println("Tarea: " + tarea.getTipo().getNombre());
+            System.out.println("Fecha de inicio: " + tarea.getDateTime());
+            System.out.println("Fecha de fin: " + tarea.getDateTime().plusHours(tarea.getDuracion())); //ver en que formato se suma la duracion
+            System.out.println("Elevador: " + tarea.getElevador().getCodigo());
+            System.out.println("Vehiculo: " + tarea.getTrabajo().getVehiculo().getMatricula());
+            System.out.println("Mecanicos: ");
+            for(User user: tarea.getMecanicos())
+                System.out.println("\t" + user.getName());;
+        }
+        System.out.println();
+    }
+
+
+
     public static void main(String[] args) throws SQLException {
         init();
         boolean exit = false;
@@ -169,6 +195,9 @@ public class App {
                     break;
                 case CLOSE_SESSION:
                     currentUser = whoAreYou();
+                    break;
+                case SHOW_SCHEDULE:
+                    showSchedule();
                     break;
                 case EXIT:
                     exit = true;

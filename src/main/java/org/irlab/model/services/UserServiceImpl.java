@@ -28,6 +28,7 @@ import com.google.common.base.Preconditions;
 import org.irlab.common.AppEntityManagerFactory;
 import org.irlab.model.daos.UserDao;
 import org.irlab.model.entities.Role;
+import org.irlab.model.entities.Tarea;
 import org.irlab.model.entities.User;
 import org.irlab.model.exceptions.UserNotFoundException;
 
@@ -129,5 +130,21 @@ public class UserServiceImpl implements UserService {
       }
 
   }
+
+    @Override
+    public List<Tarea> showHorario() {
+        EntityManager em = AppEntityManagerFactory.getInstance().createEntityManager();
+        try {
+            List<Tarea> tareaList = UserDao.getAllTareas(em, null);
+            em.getTransaction().begin();
+            em.getTransaction().commit();
+            return tareaList;
+        } catch (Exception e) {
+            em.getTransaction().rollback();
+            throw e;
+        } finally {
+            em.close();
+        }
+    }
 
 }

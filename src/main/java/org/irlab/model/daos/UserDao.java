@@ -19,6 +19,7 @@ package org.irlab.model.daos;
 import java.util.List;
 import java.util.Optional;
 
+import org.irlab.model.entities.Tarea;
 import org.irlab.model.entities.User;
 
 import jakarta.persistence.EntityManager;
@@ -63,6 +64,12 @@ public class UserDao {
 
   public static List<User> getAllUsers(EntityManager em) {
     TypedQuery<User> q = em.createQuery("SELECT u FROM User u", User.class);
+    return q.getResultList();
+
+  }
+
+  public static List<Tarea> getAllTareas(EntityManager em, String name){
+    TypedQuery<Tarea> q = em.createQuery("SELECT t FROM Tarea t", Tarea.class);
     return q.getResultList();
 
   }
