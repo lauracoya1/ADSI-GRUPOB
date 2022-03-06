@@ -16,6 +16,7 @@
 
 package org.irlab.model.daos;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -68,10 +69,19 @@ public class UserDao {
 
   }
 
-  public static List<Tarea> getAllTareas(EntityManager em, String name){
+  public static List<Tarea> getAllTareas(EntityManager em){
     TypedQuery<Tarea> q = em.createQuery("SELECT t FROM Tarea t", Tarea.class);
     return q.getResultList();
 
   }
+
+  public static List<Tarea> getTareasUser(EntityManager em, User mecanico){
+    Long userId = mecanico.getId();
+    TypedQuery<Tarea> q = em.createQuery("SELECT t FROM Tarea t JOIN t.mecanicos tm WHERE tm.id = :userId", Tarea.class);
+    q.setParameter("userId", userId);
+    return q.getResultList();
+
+  }
+
 
 }

@@ -16,9 +16,10 @@
 
 package org.irlab.model.services;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Optional;
 
 import javax.annotation.Nonnull;
@@ -30,6 +31,7 @@ import org.irlab.model.daos.UserDao;
 import org.irlab.model.entities.Role;
 import org.irlab.model.entities.Tarea;
 import org.irlab.model.entities.User;
+import org.irlab.model.exceptions.NoTareasException;
 import org.irlab.model.exceptions.UserNotFoundException;
 
 import jakarta.persistence.EntityManager;
@@ -132,16 +134,41 @@ public class UserServiceImpl implements UserService {
   }
 
     @Override
-    public List<Tarea> showHorario() {
+    public List<Tarea> showHorario(String user, LocalDate fecha) throws NoTareasException {
         EntityManager em = AppEntityManagerFactory.getInstance().createEntityManager();
         try {
-            List<Tarea> tareaList = UserDao.getAllTareas(em, null);
-            em.getTransaction().begin();
-            em.getTransaction().commit();
-            return tareaList;
-        } catch (Exception e) {
-            em.getTransaction().rollback();
-            throw e;
+            //Buscamos el usuario con ese nombre en BD
+            Optional<User> usuario = UserDao.findByName(em, user);
+            User u = usuario.orElseGet(() -> new User(DEFAULT_GREETING, DEFAULT_USER, new Role(DEFAULT_ROLE)));
+            //Inicializamos las listas
+            List<Tarea> tareaList = new ArrayList<Tarea>(); //Lista sin filtrar
+            List<Tarea> tareasOnDate = new ArrayList<Tarea>(); //Lista filtrada por fecha
+
+            //En funcion del rol mostraremos
+            if (u.getRole().getRoleName().equals("admin")){ //Las tareas de todos los usuarios para esa fecha
+                tareaList = UserDao.getAllTareas(em);
+            }
+            if (u.getRole().getRoleName().equals("user")){ //Sus propias tareas para esa fecha
+                tareaList = UserDao.getTareasUser(em, u);
+            }
+
+            if(tareaList.isEmpty()){
+                throw new NoTareasException(user);
+            }else{
+                for (Tarea tarea: tareaList){
+                    if(tarea.getDateTime().getDayOfYear() == fecha.getDayOfYear()){
+                        tareasOnDate.add(tarea);
+                    }
+                }
+
+                if(tareasOnDate.isEmpty()){
+                    throw new NoTareasException(user);
+                }
+            }
+            return tareasOnDate;
+        } catch (NoTareasException noTareasException) {
+            System.out.println("El usuario no tiene tareas para ese día");
+            return new ArrayList<Tarea>();
         } finally {
             em.close();
         }

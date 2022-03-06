@@ -18,8 +18,10 @@ package org.irlab.model.services;
 
 import org.irlab.model.entities.Tarea;
 import org.irlab.model.entities.User;
+import org.irlab.model.exceptions.NoTareasException;
 import org.irlab.model.exceptions.UserNotFoundException;
 
+import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -57,5 +59,5 @@ public interface UserService {
 
   List<User> listAllUsers();
 
-  List<Tarea> showHorario();
+  List<Tarea> showHorario(String user, LocalDate fecha) throws NoTareasException;
 }
