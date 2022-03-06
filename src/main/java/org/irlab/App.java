@@ -18,12 +18,15 @@ package org.irlab;
 
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Scanner;
 
 import org.irlab.common.AppEntityManagerFactory;
 import org.irlab.model.entities.Tarea;
 import org.irlab.model.entities.User;
+import org.irlab.model.exceptions.NoTareasException;
 import org.irlab.model.exceptions.UserNotFoundException;
 import org.irlab.model.services.UserService;
 import org.irlab.model.services.UserServiceImpl;
@@ -157,10 +160,15 @@ public class App {
         return currentUser;
     }
 
-    private static void showSchedule(){
-        List<Tarea> tareaList = userService.showHorario();
+    private static void showSchedule(String user) throws NoTareasException {
+        String fecha;
+        System.out.println("Introduzca la fecha del horario a buscar");
+        fecha = readInput("Fecha: ", "Debes introducir una fecha");
+
+        List<Tarea> tareaList = userService.showHorario(user, LocalDate.parse(fecha));
 
         System.out.println();
+
 
         for (Tarea tarea : tareaList) {
             System.out.println();
@@ -170,15 +178,15 @@ public class App {
             System.out.println("Elevador: " + tarea.getElevador().getCodigo());
             System.out.println("Vehiculo: " + tarea.getTrabajo().getVehiculo().getMatricula());
             System.out.println("Mecanicos: ");
-            for(User user: tarea.getMecanicos())
-                System.out.println("\t" + user.getName());;
+            for(User usuario: tarea.getMecanicos())
+                System.out.println("\t" + usuario.getName());;
         }
         System.out.println();
     }
 
 
 
-    public static void main(String[] args) throws SQLException {
+    public static void main(String[] args) throws SQLException, NoTareasException {
         init();
         boolean exit = false;
         scanner = new Scanner(System.in);
@@ -197,7 +205,7 @@ public class App {
                     currentUser = whoAreYou();
                     break;
                 case SHOW_SCHEDULE:
-                    showSchedule();
+                    showSchedule(currentUser);
                     break;
                 case EXIT:
                     exit = true;
