@@ -19,33 +19,42 @@ package org.irlab;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Scanner;
 
 import org.irlab.common.AppEntityManagerFactory;
+import org.irlab.model.entities.Cliente;
 import org.irlab.model.entities.Tarea;
 import org.irlab.model.entities.User;
 import org.irlab.model.exceptions.NoTareasException;
 import org.irlab.model.exceptions.UserNotFoundException;
 import org.irlab.model.services.UserService;
 import org.irlab.model.services.UserServiceImpl;
+import org.irlab.model.services.ClientService;
+import org.irlab.model.services.ClientServiceImpl;
 
 public class App {
 
 
     private enum Command {
-        GREET_USER, CHANGE_GREETING, CLOSE_SESSION, SHOW_SCHEDULE, EXIT
+        GREET_USER, 
+        CHANGE_GREETING, 
+        CLOSE_SESSION, 
+        SHOW_SCHEDULE, 
+        ADD_CLIENT,
+        EXIT
     }
 
     private static final int CORRECT_SHUTDOWN = 50000;
 
     private static UserService userService = null;
+    private static ClientService clientService = null;
 
     private static Scanner scanner = null;
 
     private static void init() {
         userService = new UserServiceImpl();
+        clientService = new ClientServiceImpl();
     }
 
     private static void shutdown() throws SQLException {
@@ -66,6 +75,7 @@ public class App {
         System.out.println("  2) Change user greeting");
         System.out.println("  3) Close user session");
         System.out.println("  4) Show schedule");
+        System.out.println("  5) Add client");
 
         System.out.println();
         System.out.println("  q) Exit");
@@ -87,6 +97,8 @@ public class App {
                         return Command.CLOSE_SESSION;
                     case '4':
                         return Command.SHOW_SCHEDULE;
+                    case '5':
+                        return Command.ADD_CLIENT;
                     case 'q':
                         return Command.EXIT;
                     default:
@@ -184,6 +196,28 @@ public class App {
         System.out.println();
     }
 
+    private static void addClient(String user) {
+        boolean exists = true;
+        String DNI;
+        do {
+            System.out.println("Introduzca DNI de cliente");
+            DNI = readInput("DNI:", "Es necesario introducir un DNI");
+
+            exists = clientService.exists(DNI);
+        } while(exists);
+        Cliente cliente = new Cliente(DNI);
+
+        System.out.println("Introduzca nombre de cliente");
+        String nombre = readInput("Nombre:", "Es necesario introducir nombre");
+        cliente.setNombre(nombre);
+
+        System.out.println("Introduzca telefono de cliente");
+        String telefono = readInput("Teléfono:", "Es necesario introducir telefono");
+        cliente.setTelefono(telefono);
+
+        clientService.insertClient(cliente);
+    }
+
 
 
     public static void main(String[] args) throws SQLException, NoTareasException {
@@ -206,6 +240,9 @@ public class App {
                     break;
                 case SHOW_SCHEDULE:
                     showSchedule(currentUser);
+                    break;
+                case ADD_CLIENT:
+                    addClient(currentUser);
                     break;
                 case EXIT:
                     exit = true;
