@@ -162,27 +162,25 @@
                         <delimiter>/</delimiter>
                         <delimiterType>normal</delimiterType>
                         <autocommit>true</autocommit>
-                        <fileset>
-                            <basedir>${basedir}/src/main/resources/sql/</basedir>
-                            <includes>
-                            	<include>F01_insert_roles.sql</include>
-                                <include>F02_insert_users.sql</include>
-                                <include>F03_insert_clientes.sql</include>
-                                <include>F04_insert_vehiculos.sql</include>
-                                <include>F05_insert_elevadores.sql</include>
-                                <include>F06_insert_tipos.sql</include>
-                                <include>F07_insert_trabajos.sql</include>
-                                <include>F08_insert_tareas.sql</include>
-                                <include>F09_insert_tareas_mecanicos.sql</include>
+                        <basedir>${basedir}/src/main/resources/sql/</basedir>
+                        <srcFiles>
+                            <srcFile>src/main/resources/sql/F01_insert_roles.sql</srcFile>
+                            <srcFile>src/main/resources/sql/F02_insert_users.sql</srcFile>
+                            <srcFile>src/main/resources/sql/F03_insert_clientes.sql</srcFile>
+                            <srcFile>src/main/resources/sql/F04_insert_vehiculos.sql</srcFile>
+                            <srcFile>src/main/resources/sql/F05_insert_elevadores.sql</srcFile>
+                            <srcFile>src/main/resources/sql/F06_insert_tipos.sql</srcFile>
+                            <srcFile>src/main/resources/sql/F07_insert_trabajos.sql</srcFile>
+                            <srcFile>src/main/resources/sql/F08_insert_tareas.sql</srcFile>
+                            <srcFile>src/main/resources/sql/F09_insert_tareas_mecanicos.sql</srcFile>
 
-                            </includes>
-                        </fileset>
+                        </srcFiles>
                     </configuration>
-            	</execution>
+                </execution>
             </executions>        	
         </plugin>
-		
-      </plugins>
-    </pluginManagement>
+
+    </plugins>
+</pluginManagement>
   </build>
 </project>
