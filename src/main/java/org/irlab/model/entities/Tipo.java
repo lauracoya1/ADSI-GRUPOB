@@ -11,6 +11,8 @@ public class Tipo {
 	@Id
 	@Column(unique=true, nullable = false)
 	private String nombre;
+	private int duracion;
+	private int precio;
 
         public Tipo() {
 	}
@@ -22,5 +24,33 @@ public class Tipo {
 	public String getNombre() {
 		return nombre;
 	}
-	
+
+        public int getPrecio() {
+            return precio;
+        }
+
+        public int getDuracion() {
+            return duracion;
+        }
+
+        public void setPrecio(int precio) {
+            this.precio = precio;
+        }
+
+        public void setDuracion(int duracion) {
+            this.duracion = duracion;
+        }
+
+        @Override
+        public String toString() {
+            StringBuilder sb = new StringBuilder();
+            sb.append("Tipo: ")
+                .append(this.nombre)
+                .append(" con duracion: ")
+                .append(duracion)
+                .append(" y precio ")
+                .append(this.precio);
+
+            return sb.toString();
+        }
 }

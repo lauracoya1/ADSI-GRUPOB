@@ -25,6 +25,7 @@ import java.util.Scanner;
 import org.irlab.common.AppEntityManagerFactory;
 import org.irlab.model.entities.Cliente;
 import org.irlab.model.entities.Tarea;
+import org.irlab.model.entities.Tipo;
 import org.irlab.model.entities.User;
 import org.irlab.model.entities.Vehiculo;
 import org.irlab.model.exceptions.NoTareasException;
@@ -35,6 +36,8 @@ import org.irlab.model.services.ClientService;
 import org.irlab.model.services.ClientServiceImpl;
 import org.irlab.model.services.VehicleService;
 import org.irlab.model.services.VehicleServiceImpl;
+import org.irlab.model.services.TipoService;
+import org.irlab.model.services.TipoServiceImpl;
 
 public class App {
 
@@ -46,6 +49,7 @@ public class App {
         SHOW_SCHEDULE, 
         ADD_CLIENT,
         ADD_VEHICLE,
+        ADD_TYPE,
         EXIT
     }
 
@@ -54,6 +58,7 @@ public class App {
     private static UserService userService = null;
     private static ClientService clientService = null;
     private static VehicleService vehiculoService = null;
+    private static TipoService tipoService = null;
 
     private static Scanner scanner = null;
 
@@ -61,6 +66,7 @@ public class App {
         userService = new UserServiceImpl();
         clientService = new ClientServiceImpl();
         vehiculoService = new VehicleServiceImpl();
+        tipoService = new TipoServiceImpl();
     }
 
     private static void shutdown() throws SQLException {
@@ -83,6 +89,7 @@ public class App {
         System.out.println("  4) Show schedule");
         System.out.println("  5) Add client");
         System.out.println("  6) Add vehicle");
+        System.out.println("  7) Add type");
 
         System.out.println();
         System.out.println("  q) Exit");
@@ -108,6 +115,8 @@ public class App {
                         return Command.ADD_CLIENT;
                     case '6':
                         return Command.ADD_VEHICLE;
+                    case '7':
+                        return Command.ADD_TYPE;
                     case 'q':
                         return Command.EXIT;
                     default:
@@ -274,6 +283,49 @@ public class App {
         return vehiculo;
     }
 
+    public static boolean isInteger(String s) {
+        try { 
+            Integer.parseInt(s); 
+        } catch(NumberFormatException e) { 
+            return false; 
+        } catch(NullPointerException e) {
+            return false;
+        }
+        // only got here if we didn't return false
+        return true;
+    }
+
+    private static Tipo addTipo() {
+        boolean exists = true;
+        String nombre;
+        do {
+            System.out.println("Introduzca nombre del tipo");
+            nombre = readInput("Nombre:", "Es necesario introducir un nombre");
+
+            exists = tipoService.exists(nombre);
+        } while(exists);
+
+        Tipo tipo = new Tipo(nombre);
+        String duracion = "";
+        String precio = "";
+
+        System.out.println("Introduzca una duración");
+        do {
+            duracion = readInput("Duracion:", "Es necesario introducir una duración");
+        } while (!isInteger(duracion));
+        tipo.setDuracion(Integer.parseInt(duracion));
+
+        System.out.println("Introduzca precio");
+        do {
+            precio = readInput("Precio:", "Es necesario introducir un precio");
+        } while (!isInteger(precio));
+        tipo.setPrecio(Integer.parseInt(precio));
+
+        tipoService.insertTipo(tipo);
+
+        return tipo;
+    }
+
 
 
     public static void main(String[] args) throws SQLException, NoTareasException {
@@ -302,6 +354,9 @@ public class App {
                     break;
                 case ADD_VEHICLE:
                     addVehiculo();
+                    break;
+                case ADD_TYPE:
+                    addTipo();
                     break;
                 case EXIT:
                     exit = true;
