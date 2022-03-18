@@ -54,6 +54,7 @@ public class App {
         ADD_VEHICLE,
         ADD_TYPE,
         ADD_ELEVATOR,
+        ADD_USER,
         EXIT
     }
 
@@ -97,6 +98,7 @@ public class App {
         System.out.println("  6) Add vehicle");
         System.out.println("  7) Add type");
         System.out.println("  8) Add elevator");
+        System.out.println("  9) Add user");
 
         System.out.println();
         System.out.println("  q) Exit");
@@ -126,6 +128,8 @@ public class App {
                         return Command.ADD_TYPE;
                     case '8':
                         return Command.ADD_ELEVATOR;
+                    case '9':
+                        return Command.ADD_USER;
                     case 'q':
                         return Command.EXIT;
                     default:
@@ -352,6 +356,30 @@ public class App {
         return elevador;
     }
 
+    private static User addUser() {
+        boolean exists = true;
+        String nombre;
+        do {
+
+            System.out.println("Introduzca Nombre");
+            nombre = readInput("Nombre:", "Es necesario introducir un Nombre");
+
+            exists = userService.exists(nombre);
+        } while(exists);
+
+
+        System.out.println("Introduzca contraseña");
+        String password = readInput("Contraseña:", "Es necesario introducir una contraseña");
+
+
+        User user = new User(nombre);
+        user.setPassword(password);
+
+        userService.insertUser(user);
+
+        return user;
+    }
+
 
 
     public static void main(String[] args) throws SQLException, NoTareasException {
@@ -386,6 +414,9 @@ public class App {
                     break;
                 case ADD_ELEVATOR:
                     addElevator();
+                    break;
+                case ADD_USER:
+                    addUser();
                     break;
                 case EXIT:
                     exit = true;

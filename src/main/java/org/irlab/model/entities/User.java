@@ -54,6 +54,10 @@ public class User {
   public User() {
       this.tareas = new HashSet<Tarea>();
   }
+  public User(String nombre) {
+      this.name = nombre;
+      this.tareas = new HashSet<Tarea>();
+  }
 
   public User(String name, String greeting, Role role) {
       this.tareas = new HashSet<Tarea>();

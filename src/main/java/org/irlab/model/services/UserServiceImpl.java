@@ -27,6 +27,7 @@ import javax.annotation.Nonnull;
 import com.google.common.base.Preconditions;
 
 import org.irlab.common.AppEntityManagerFactory;
+import org.irlab.model.daos.RoleDao;
 import org.irlab.model.daos.UserDao;
 import org.irlab.model.entities.Role;
 import org.irlab.model.entities.Tarea;
@@ -169,6 +170,57 @@ public class UserServiceImpl implements UserService {
         } catch (NoTareasException noTareasException) {
             System.out.println("El usuario no tiene tareas para ese día");
             return new ArrayList<Tarea>();
+        } finally {
+            em.close();
+        }
+    }
+
+    @Override
+    public boolean exists(@Nonnull String nombre) {
+        Preconditions.checkNotNull(nombre, "Nombre cannot be null");
+
+        if (nombre.equals("")) {
+            return false;
+        }
+
+        EntityManager em = AppEntityManagerFactory.getInstance().createEntityManager();
+
+        try {
+            boolean exists = UserDao
+                .findByName(em, nombre)
+                .map(c -> {
+                    return true;
+                }).orElseThrow(() -> new UserNotFoundException(String.format("with nombre %s", nombre)));
+
+            return exists;
+        } catch (UserNotFoundException e) {
+            return false;
+        } catch ( Exception e ) {
+            throw e;
+        } finally {
+            em.close();
+        }
+    }
+    @Override
+    public void insertUser(@Nonnull User user) {
+        Preconditions.checkNotNull(user, "user cannot be null");
+
+        if (exists(user.getName())){
+            System.out.println("User already present");
+            return;
+        }
+        EntityManager em = AppEntityManagerFactory.getInstance().createEntityManager();
+
+        Optional<Role> maybeRole = RoleDao.findByName(em, "user");
+        Role r = maybeRole.orElseGet(() -> new Role("client"));
+        user.setRole(r);
+
+        try {
+            em.getTransaction().begin();
+            UserDao.update(em, user);
+            em.getTransaction().commit();
+        } catch (Exception e) {
+            throw e;
         } finally {
             em.close();
         }

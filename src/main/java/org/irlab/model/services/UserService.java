@@ -29,35 +29,37 @@ import java.util.List;
  */
 public interface UserService {
 
-  /**
-   * Get a string greeting the user
-   *
-   * @param name the name of the user
-   * @return the greeting message
-   */
-  String greet(String name);
+    /**
+     * Get a string greeting the user
+     *
+     * @param name the name of the user
+     * @return the greeting message
+     */
+    String greet(String name);
 
-  /**
-   * Change the user greeting message
-   *
-   * @param name     the name of the user
-   * @param greeting the greeting message
-   */
-  void setUserGreeting(String name, String greeting) throws UserNotFoundException;
+    /**
+     * Change the user greeting message
+     *
+     * @param name     the name of the user
+     * @param greeting the greeting message
+     */
+    void setUserGreeting(String name, String greeting) throws UserNotFoundException;
 
-  /**
-   * Check user credentials 
-   *
-   * @param name     the name of the user
-   * @param password the password of the user
-   *
-   * @return boolean indicating if credentials are correct
-   */
-  boolean checkCredentials(String name, String password);
+    /**
+     * Check user credentials 
+     *
+     * @param name     the name of the user
+     * @param password the password of the user
+     *
+     * @return boolean indicating if credentials are correct
+     */
+    boolean checkCredentials(String name, String password);
 
 
+    void insertUser(User user);
+    boolean exists(String dni);
 
-  List<User> listAllUsers();
+    List<User> listAllUsers();
 
-  List<Tarea> showHorario(String user, LocalDate fecha) throws NoTareasException;
+    List<Tarea> showHorario(String user, LocalDate fecha) throws NoTareasException;
 }
