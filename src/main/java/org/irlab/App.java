@@ -24,6 +24,7 @@ import java.util.Scanner;
 
 import org.irlab.common.AppEntityManagerFactory;
 import org.irlab.model.entities.Cliente;
+import org.irlab.model.entities.Elevador;
 import org.irlab.model.entities.Tarea;
 import org.irlab.model.entities.Tipo;
 import org.irlab.model.entities.User;
@@ -38,6 +39,8 @@ import org.irlab.model.services.VehicleService;
 import org.irlab.model.services.VehicleServiceImpl;
 import org.irlab.model.services.TipoService;
 import org.irlab.model.services.TipoServiceImpl;
+import org.irlab.model.services.ElevadorService;
+import org.irlab.model.services.ElevadorServiceImpl;
 
 public class App {
 
@@ -50,6 +53,7 @@ public class App {
         ADD_CLIENT,
         ADD_VEHICLE,
         ADD_TYPE,
+        ADD_ELEVATOR,
         EXIT
     }
 
@@ -59,6 +63,7 @@ public class App {
     private static ClientService clientService = null;
     private static VehicleService vehiculoService = null;
     private static TipoService tipoService = null;
+    private static ElevadorService elevadorService = null;
 
     private static Scanner scanner = null;
 
@@ -67,6 +72,7 @@ public class App {
         clientService = new ClientServiceImpl();
         vehiculoService = new VehicleServiceImpl();
         tipoService = new TipoServiceImpl();
+        elevadorService = new ElevadorServiceImpl();
     }
 
     private static void shutdown() throws SQLException {
@@ -90,6 +96,7 @@ public class App {
         System.out.println("  5) Add client");
         System.out.println("  6) Add vehicle");
         System.out.println("  7) Add type");
+        System.out.println("  8) Add elevator");
 
         System.out.println();
         System.out.println("  q) Exit");
@@ -117,6 +124,8 @@ public class App {
                         return Command.ADD_VEHICLE;
                     case '7':
                         return Command.ADD_TYPE;
+                    case '8':
+                        return Command.ADD_ELEVATOR;
                     case 'q':
                         return Command.EXIT;
                     default:
@@ -326,6 +335,23 @@ public class App {
         return tipo;
     }
 
+    private static Elevador addElevator() {
+        boolean exists = true;
+        String codigo;
+        do {
+            System.out.println("Introduzca código del elevador");
+            codigo = readInput("Código:", "Es necesario introducir un código");
+
+            exists = elevadorService.exists(codigo);
+        } while(exists);
+
+        Elevador elevador = new Elevador(codigo);
+
+        elevadorService.insertElevador(elevador);
+
+        return elevador;
+    }
+
 
 
     public static void main(String[] args) throws SQLException, NoTareasException {
@@ -357,6 +383,9 @@ public class App {
                     break;
                 case ADD_TYPE:
                     addTipo();
+                    break;
+                case ADD_ELEVATOR:
+                    addElevator();
                     break;
                 case EXIT:
                     exit = true;

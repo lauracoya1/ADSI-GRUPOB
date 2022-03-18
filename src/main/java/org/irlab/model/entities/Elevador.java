@@ -23,4 +23,9 @@ public class Elevador {
 	public String getCodigo() {
 		return codigo;
 	}
+
+        @Override
+        public String toString() {
+            return "Elevador: " + this.codigo;
+        }
 }
