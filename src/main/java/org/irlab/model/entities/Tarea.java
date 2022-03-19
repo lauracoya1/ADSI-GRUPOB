@@ -95,7 +95,11 @@ public class Tarea {
   }
 
   public void addMecanico(User user) {
-      this.mecanicos.add(user);
+      if (!mecanicos.contains(user)) {
+        this.mecanicos.add(user);
+      } else {
+          System.out.println("User already present");
+      }
   }
 
   public void removeMecanico(User user) {

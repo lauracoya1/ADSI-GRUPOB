@@ -83,4 +83,9 @@ public class Trabajo {
       this.tareas.remove(tarea);
   }
 
+  @Override
+  public String toString() {
+      return this.id.toString();
+  }
+
 }

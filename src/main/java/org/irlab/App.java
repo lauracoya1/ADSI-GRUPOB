@@ -28,6 +28,7 @@ import org.irlab.model.entities.Elevador;
 import org.irlab.model.entities.Role;
 import org.irlab.model.entities.Tarea;
 import org.irlab.model.entities.Tipo;
+import org.irlab.model.entities.Trabajo;
 import org.irlab.model.entities.User;
 import org.irlab.model.entities.Vehiculo;
 import org.irlab.model.exceptions.NoTareasException;
@@ -44,6 +45,10 @@ import org.irlab.model.services.ElevadorService;
 import org.irlab.model.services.ElevadorServiceImpl;
 import org.irlab.model.services.RoleService;
 import org.irlab.model.services.RoleServiceImpl;
+import org.irlab.model.services.TrabajoService;
+import org.irlab.model.services.TrabajoServiceImpl;
+import org.irlab.model.services.TareaService;
+import org.irlab.model.services.TareaServiceImpl;
 
 public class App {
 
@@ -58,6 +63,7 @@ public class App {
         ADD_TYPE,
         ADD_ELEVATOR,
         ADD_USER,
+        ADD_TASK,
         EXIT
     }
 
@@ -69,6 +75,8 @@ public class App {
     private static TipoService tipoService = null;
     private static ElevadorService elevadorService = null;
     private static RoleService roleService = null;
+    private static TrabajoService trabajoService = null;
+    private static TareaService tareaService = null;
 
     private static Scanner scanner = null;
 
@@ -79,6 +87,8 @@ public class App {
         tipoService = new TipoServiceImpl();
         elevadorService = new ElevadorServiceImpl();
         roleService = new RoleServiceImpl();
+        trabajoService = new TrabajoServiceImpl();
+        tareaService = new TareaServiceImpl();
     }
 
     private static void shutdown() throws SQLException {
@@ -104,6 +114,7 @@ public class App {
         System.out.println("  7) Add type");
         System.out.println("  8) Add elevator");
         System.out.println("  9) Add user");
+        System.out.println("  a) Add task");
 
         System.out.println();
         System.out.println("  q) Exit");
@@ -135,6 +146,8 @@ public class App {
                         return Command.ADD_ELEVATOR;
                     case '9':
                         return Command.ADD_USER;
+                    case 'a':
+                        return Command.ADD_TASK;
                     case 'q':
                         return Command.EXIT;
                     default:
@@ -402,8 +415,95 @@ public class App {
         return user;
     }
 
+    private static Tarea addTask() {
 
+        Tarea tarea = new Tarea();
+        boolean inputInvalid = true;
 
+        // ADD TIPO
+        System.out.println("Tipo de tarea: ");
+        List<Tipo> tipos = tipoService.listAllTipos();
+        do {
+            int index = 0;
+            for (Tipo t : tipos) {
+                System.out.printf("%d ) %s \n", index, t.toString());
+                index++;
+            }
+            String seleccion =  readInput("Selección: ", "Seleccione un valor");
+            if (tipos.size() > 0 && Integer.parseInt(seleccion) >= 0 && Integer.parseInt(seleccion) < tipos.size()) {
+                tarea.setTipo(tipos.get(Integer.parseInt(seleccion)));
+                inputInvalid = false;
+            } 
+        } while (inputInvalid);
+
+        // ADD TRABAJO
+        inputInvalid = true;
+        System.out.println("Elevador asignado: ");
+        List<Elevador> elevadores = elevadorService.listAllElevadores();
+        do {
+            int index = 0;
+            for (Elevador e : elevadores) {
+                System.out.printf("%d ) %s \n", index, e.toString());
+                index++;
+            }
+            String seleccion =  readInput("Selección: ", "Seleccione un valor");
+            if (elevadores.size() > 0 && Integer.parseInt(seleccion) >= 0 && Integer.parseInt(seleccion) < elevadores.size()) {
+                tarea.setElevador(elevadores.get(Integer.parseInt(seleccion)));
+                inputInvalid = false;
+            } 
+        } while (inputInvalid);
+
+        // ADD TRABAJO
+        inputInvalid = true;
+        System.out.println("Elevador asignado: ");
+        List<Trabajo> trabajos = trabajoService.listAllTrabajos();
+        do {
+            int index = 0;
+            for (Trabajo t : trabajos ) {
+                System.out.printf("%d ) %s \n", index, t.toString());
+                index++;
+            }
+            String seleccion =  readInput("Selección: ", "Seleccione un valor");
+            if (trabajos.size() > 0 && Integer.parseInt(seleccion) >= 0 && Integer.parseInt(seleccion) < trabajos.size()) {
+                tarea.setTrabajo(trabajos.get(Integer.parseInt(seleccion)));
+                inputInvalid = false;
+            } 
+        } while (inputInvalid);
+
+        // ADD MECANICO
+        inputInvalid = true;
+        boolean addOther = false;
+        System.out.println("Seleccione un mecanico : ");
+        List<User> mecanicos = userService.listAllUsers();
+        do {
+            addOther = false;
+            do {
+                int index = 0;
+                for (User u : mecanicos ) {
+                    System.out.printf("%d ) %s \n", index, u.toString());
+                    index++;
+                }
+                String seleccion =  readInput("Selección: ", "Seleccione un valor");
+                if (mecanicos.size() > 0 && Integer.parseInt(seleccion) >= 0 && Integer.parseInt(seleccion) < mecanicos.size()) {
+                    tarea.addMecanico(mecanicos.get(Integer.parseInt(seleccion)));
+                    inputInvalid = false;
+                } 
+            } while (inputInvalid);
+            String addNext =  readInput("(y)Añadir otro | (otro) No añadir otro: ", "Seleccione un valor");
+            switch(addNext){
+                case "y":
+                    addOther = true ;
+                    break;
+                default:
+                    addOther = false;
+                    break;
+            }
+        } while (addOther);
+
+        tareaService.insertTarea(tarea);
+
+        return tarea;
+    }
     public static void main(String[] args) throws SQLException, NoTareasException {
         init();
         boolean exit = false;
@@ -439,6 +539,9 @@ public class App {
                     break;
                 case ADD_USER:
                     addUser();
+                    break;
+                case ADD_TASK:
+                    addTask();
                     break;
                 case EXIT:
                     exit = true;
