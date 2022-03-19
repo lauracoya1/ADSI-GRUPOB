@@ -224,7 +224,7 @@ public class App {
         return currentUser;
     }
 
-    private static void showSchedule(String user) throws NoTareasException {
+    private static void showSchedule(String user) throws NoTareasException, UserNotFoundException {
         String fecha;
         System.out.println("Introduzca la fecha del horario a buscar");
         fecha = readInput("Fecha: ", "Debes introducir una fecha");
@@ -236,14 +236,17 @@ public class App {
 
         for (Tarea tarea : tareaList) {
             System.out.println();
-            System.out.println("Tarea: " + tarea.getTipo().getNombre());
+            System.out.println("Tipo tarea: " + tarea.getTipo().getNombre());
             System.out.println("Fecha de inicio: " + tarea.getDateTime());
-            System.out.println("Fecha de fin: " + tarea.getDateTime().plusMinutes(tarea.getDuracion())); //ver en que formato se suma la duracion
+            System.out.println("Duracion: " + tarea.getDuracion() + "minutos");
             System.out.println("Elevador: " + tarea.getElevador().getCodigo());
             System.out.println("Vehiculo: " + tarea.getTrabajo().getVehiculo().getMatricula());
-            System.out.println("Mecanicos: ");
-            for(User usuario: tarea.getMecanicos())
-                System.out.println("\t" + usuario.getName());;
+            if(userService.getByUserName(user).getRole().getRoleName().equals("admin")){
+                System.out.println("Mecanicos: ");
+                for(User usuario: tarea.getMecanicos())
+                    System.out.println("\t" + usuario.getName());
+            }
+
         }
         System.out.println();
     }
@@ -523,7 +526,7 @@ public class App {
 
         return tarea;
     }
-    public static void main(String[] args) throws SQLException, NoTareasException {
+    public static void main(String[] args) throws SQLException, NoTareasException, UserNotFoundException {
         init();
         boolean exit = false;
         scanner = new Scanner(System.in);

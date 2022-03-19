@@ -199,6 +199,20 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public User getByUserName(String user) throws UserNotFoundException {
+        Preconditions.checkNotNull(user, "name cannot be null");
+
+        EntityManager em = AppEntityManagerFactory.getInstance().createEntityManager();
+        try {
+            Optional<User> maybeUser = UserDao.findByName(em, user);
+            User u = maybeUser.orElseGet(() -> new User(DEFAULT_GREETING, DEFAULT_USER, new Role(DEFAULT_ROLE)));
+
+            return (u);
+        } finally {
+            em.close();
+        }    }
+
+    @Override
     public boolean exists(@Nonnull String nombre) {
         Preconditions.checkNotNull(nombre, "Nombre cannot be null");
 
