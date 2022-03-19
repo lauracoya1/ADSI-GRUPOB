@@ -18,7 +18,10 @@ package org.irlab;
 
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.sql.Time;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Scanner;
 
@@ -183,7 +186,7 @@ public class App {
         }
         return currentUser;
     }
-    //va a haber que dejar la opcion de change greeting y tal y va a haber que poner un "dime quien eres"
+
     private static String changeGreeting(String currentUser) { //va a haber que tocar para que recuerde que usuario lo esta utilizando
         if (currentUser == null){
             currentUser = readInput("User name: ", "You must supply a user name");
@@ -235,7 +238,7 @@ public class App {
             System.out.println();
             System.out.println("Tarea: " + tarea.getTipo().getNombre());
             System.out.println("Fecha de inicio: " + tarea.getDateTime());
-            System.out.println("Fecha de fin: " + tarea.getDateTime().plusHours(tarea.getDuracion())); //ver en que formato se suma la duracion
+            System.out.println("Fecha de fin: " + tarea.getDateTime().plusMinutes(tarea.getDuracion())); //ver en que formato se suma la duracion
             System.out.println("Elevador: " + tarea.getElevador().getCodigo());
             System.out.println("Vehiculo: " + tarea.getTrabajo().getVehiculo().getMatricula());
             System.out.println("Mecanicos: ");
@@ -436,7 +439,7 @@ public class App {
             } 
         } while (inputInvalid);
 
-        // ADD TRABAJO
+        // ADD ELEVADOR
         inputInvalid = true;
         System.out.println("Elevador asignado: ");
         List<Elevador> elevadores = elevadorService.listAllElevadores();
@@ -470,6 +473,17 @@ public class App {
             } 
         } while (inputInvalid);
 
+
+        // ADD FECHA
+        String fecha, hora;
+        System.out.println("Introduzca la fecha de inicio para la tarea");
+        fecha = readInput("Fecha: ", "Debes introducir una fecha");
+        System.out.println("Introduzca la hora de inicio para la tarea");
+        hora = readInput("Fecha: ", "Debes introducir una hora");
+        tarea.setDateTime(LocalDateTime.of(LocalDate.parse(fecha), LocalTime.parse(hora)));
+
+
+
         // ADD MECANICO
         inputInvalid = true;
         boolean addOther = false;
@@ -484,6 +498,11 @@ public class App {
                     index++;
                 }
                 String seleccion =  readInput("Selección: ", "Seleccione un valor");
+                while(userService.isBusy(mecanicos.get(Integer.parseInt(seleccion)), (LocalDateTime.of(LocalDate.parse(fecha), LocalTime.parse(hora))))){
+                    System.out.println("El mecánico seleccionado está ocupado a esa hora, seleccione otro");
+                    seleccion =  readInput("Selección: ", "Seleccione un valor");
+                }
+
                 if (mecanicos.size() > 0 && Integer.parseInt(seleccion) >= 0 && Integer.parseInt(seleccion) < mecanicos.size()) {
                     tarea.addMecanico(mecanicos.get(Integer.parseInt(seleccion)));
                     inputInvalid = false;

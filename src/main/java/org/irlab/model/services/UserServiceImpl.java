@@ -17,6 +17,7 @@
 package org.irlab.model.services;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -172,6 +173,29 @@ public class UserServiceImpl implements UserService {
         } finally {
             em.close();
         }
+    }
+
+    @Override
+    public boolean isBusy(User mecanico, LocalDateTime fechaHora) {
+        EntityManager em = AppEntityManagerFactory.getInstance().createEntityManager();
+        try {
+            //Buscamos el usuario con ese nombre en BD
+            Optional<User> usuario = UserDao.findByName(em, mecanico.getName());
+            User u = usuario.orElseGet(() -> new User(DEFAULT_GREETING, DEFAULT_USER, new Role(DEFAULT_ROLE)));
+            List<Tarea> tareaList = UserDao.getTareasUser(em, u);
+
+            for (Tarea tarea: tareaList){
+                if(tarea.getDateTime() == fechaHora){
+                    return true;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        finally {
+            em.close();
+        }
+        return false;
     }
 
     @Override

@@ -22,6 +22,7 @@ import org.irlab.model.exceptions.NoTareasException;
 import org.irlab.model.exceptions.UserNotFoundException;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -62,4 +63,6 @@ public interface UserService {
     List<User> listAllUsers();
 
     List<Tarea> showHorario(String user, LocalDate fecha) throws NoTareasException;
+
+    boolean isBusy(User u, LocalDateTime fechaHora);
 }
