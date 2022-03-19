@@ -16,6 +16,8 @@
 
 package org.irlab.model.entities;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -47,7 +49,13 @@ public class User {
   @ManyToMany(mappedBy = "mecanicos")
   Set<Tarea> tareas;
 
+  private String dni;
+  private String telefono;
+  private LocalDate fechaAlta;
 
+
+
+    private LocalDate fechaNacimiento;
   private String greeting;
   private String password;
 
@@ -102,6 +110,22 @@ public class User {
 
   public Set<Tarea> getTareas() {
       return tareas;
+  }
+
+  public String getTelefono() {
+      return telefono;
+  }
+
+  public void setTelefono(String telefono) {
+      this.telefono = telefono;
+  }
+
+  public LocalDate getFechaNacimiento() {
+      return fechaNacimiento;
+  }
+
+  public void setFechaNacimiento(LocalDate fechaNacimiento) {
+      this.fechaNacimiento = fechaNacimiento;
   }
 
   @Override
