@@ -455,7 +455,7 @@ public class App {
 
         // ADD TRABAJO
         inputInvalid = true;
-        System.out.println("Elevador asignado: ");
+        System.out.println("Trabajo asignado: ");
         List<Trabajo> trabajos = trabajoService.listAllTrabajos();
         do {
             int index = 0;
