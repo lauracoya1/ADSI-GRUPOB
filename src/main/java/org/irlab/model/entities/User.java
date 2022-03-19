@@ -42,34 +42,47 @@ public class User {
   private Long id;
   @Column(unique = true, nullable = false)
   private String name;
-  @ManyToOne
+  private String apellido1;
+  private String apellido2;
+    @ManyToOne
   @JoinColumn(name="user_role", nullable=false)
   private Role role;
 
   @ManyToMany(mappedBy = "mecanicos")
   Set<Tarea> tareas;
-
+  @Column(unique = true, nullable = false)
   private String dni;
   private String telefono;
-  private LocalDate fechaAlta;
+  private LocalDateTime fechaAlta;
 
 
 
-    private LocalDate fechaNacimiento;
+  private LocalDate fechaNacimiento;
   private String greeting;
   private String password;
+  private Long cuentaBancaria;
 
   public User() {
       this.tareas = new HashSet<Tarea>();
   }
-  public User(String nombre) {
-      this.name = nombre;
-      this.tareas = new HashSet<Tarea>();
-  }
+
+    public User(String dni) {
+        this.dni = dni;
+        this.tareas = new HashSet<Tarea>();
+        this.fechaAlta = LocalDateTime.now();
+
+    }
+
+    public User(String dni, String name, String greeting, Role role) {
+        this.tareas = new HashSet<Tarea>();
+        this.dni = dni;
+        this.name = name;
+        this.greeting = greeting;
+        this.role = role;
+    }
 
   public User(String name, String greeting, Role role) {
       this.tareas = new HashSet<Tarea>();
-
       this.name = name;
       this.greeting = greeting;
       this.role = role;
@@ -83,8 +96,31 @@ public class User {
       return name;
   }
 
+    public void setName(String name) {
+        this.name = name;
+    }
 
-  public String getGreeting() {
+    public String getApellido1() {
+        return apellido1;
+    }
+
+    public void setApellido1(String apellido1) {
+        this.apellido1 = apellido1;
+    }
+
+    public String getApellido2() {
+        return apellido2;
+    }
+
+    public void setApellido2(String apellido2) {
+        this.apellido2 = apellido2;
+    }
+
+    public String getDni() {
+        return dni;
+    }
+
+    public String getGreeting() {
       return greeting;
   }
 
@@ -128,7 +164,19 @@ public class User {
       this.fechaNacimiento = fechaNacimiento;
   }
 
-  @Override
+  public LocalDateTime getFechaAlta() {
+      return fechaAlta;
+  }
+
+    public Long getCuentaBancaria() {
+        return cuentaBancaria;
+    }
+
+    public void setCuentaBancaria(Long cuentaBancaria) {
+        this.cuentaBancaria = cuentaBancaria;
+    }
+
+    @Override
   public String toString() {
       return "User(name=" + name + ", greeting=" + greeting + ")";
   }
