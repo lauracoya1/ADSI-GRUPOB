@@ -385,6 +385,7 @@ public class App {
         boolean exists = true;
         String nombre, dni;
 
+
         do {
             System.out.println("Introduzca DNI");
             dni = readInput("DNI:", "Es necesario introducir un DNI");
@@ -398,8 +399,6 @@ public class App {
         User user = new User(dni);
         user.setName(nombre);
 
-        System.out.println("Introduzca contraseña");
-        String password = readInput("Contraseña:", "Es necesario introducir una contraseña");
 
         System.out.println("Introduzca el primer apellido");
         String apellido1 = readInput("Primer apellido:", "Es necesario introducir el primer apellido");
@@ -408,6 +407,9 @@ public class App {
         System.out.println("Introduzca el segundo apellido");
         String apellido2 = readInput("Segundo apellido:", "Es necesario introducir el segundo apellido");
         user.setApellido2(apellido2);
+
+        System.out.println("Introduzca contraseña");
+        String password = readInput("Contraseña:", "Es necesario introducir una contraseña");
 
         /*List<Role> roles = roleService.listAllRoles();
 
@@ -425,7 +427,9 @@ public class App {
                 inputInvalid = false;
             } 
         } while (inputInvalid);*/
-        user.setRole(new Role("agent"));
+
+        List<Role> roles = roleService.listAllRoles();
+        user.setRole(roles.get(1));
 
         System.out.println("Introduzca su fecha de nacimiento");
         String fechaNacimiento = readInput("Fecha nacimiento:", "Es necesario introducir su fecha de nacimiento");
