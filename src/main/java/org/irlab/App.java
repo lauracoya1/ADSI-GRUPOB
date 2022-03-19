@@ -383,21 +383,33 @@ public class App {
 
     private static User addUser() {
         boolean exists = true;
-        String nombre;
-        do {
+        String nombre, dni;
 
+        do {
+            System.out.println("Introduzca DNI");
+            dni = readInput("DNI:", "Es necesario introducir un DNI");
             System.out.println("Introduzca Nombre");
-            nombre = readInput("Nombre:", "Es necesario introducir un Nombre");
+            nombre = readInput("Nombre:", "Es necesario introducir un nombre");
 
             exists = userService.exists(nombre);
+            if(exists){System.out.println("El usuario con ese nombre ya existe");}
         } while(exists);
 
-        User user = new User(nombre);
+        User user = new User(dni);
+        user.setName(nombre);
 
         System.out.println("Introduzca contraseña");
         String password = readInput("Contraseña:", "Es necesario introducir una contraseña");
 
-        List<Role> roles = roleService.listAllRoles();
+        System.out.println("Introduzca el primer apellido");
+        String apellido1 = readInput("Primer apellido:", "Es necesario introducir el primer apellido");
+        user.setApellido1(apellido1);
+
+        System.out.println("Introduzca el segundo apellido");
+        String apellido2 = readInput("Segundo apellido:", "Es necesario introducir el segundo apellido");
+        user.setApellido2(apellido2);
+
+        /*List<Role> roles = roleService.listAllRoles();
 
         System.out.println("Con rol de: ");
         boolean inputInvalid = true;
@@ -412,8 +424,20 @@ public class App {
                 user.setRole(roles.get(Integer.parseInt(seleccion)));
                 inputInvalid = false;
             } 
-        } while (inputInvalid);
+        } while (inputInvalid);*/
+        user.setRole(new Role("agent"));
 
+        System.out.println("Introduzca su fecha de nacimiento");
+        String fechaNacimiento = readInput("Fecha nacimiento:", "Es necesario introducir su fecha de nacimiento");
+        user.setFechaNacimiento(LocalDate.parse(fechaNacimiento));
+
+        String cuentaBancaria;
+        do{
+            cuentaBancaria = readInput("Cuenta bancaria:", "Es necesario introducir su cuenta bancaria");
+
+        }while(cuentaBancaria.length() != 16);
+
+        user.setCuentaBancaria(Long.parseLong(cuentaBancaria));
 
         user.setPassword(password);
         userService.insertUser(user);
