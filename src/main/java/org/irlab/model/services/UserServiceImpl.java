@@ -27,7 +27,6 @@ import javax.annotation.Nonnull;
 import com.google.common.base.Preconditions;
 
 import org.irlab.common.AppEntityManagerFactory;
-import org.irlab.model.daos.RoleDao;
 import org.irlab.model.daos.UserDao;
 import org.irlab.model.entities.Role;
 import org.irlab.model.entities.Tarea;
@@ -210,10 +209,6 @@ public class UserServiceImpl implements UserService {
             return;
         }
         EntityManager em = AppEntityManagerFactory.getInstance().createEntityManager();
-
-        Optional<Role> maybeRole = RoleDao.findByName(em, "user");
-        Role r = maybeRole.orElseGet(() -> new Role("client"));
-        user.setRole(r);
 
         try {
             em.getTransaction().begin();

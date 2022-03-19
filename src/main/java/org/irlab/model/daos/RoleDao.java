@@ -24,4 +24,10 @@ public class RoleDao {
 	      return Optional.empty();
 	    }
 	}
+
+        public static List<Role> getAllRoles(EntityManager em) {
+            TypedQuery<Role> q = em.createQuery("SELECT r FROM Role r", Role.class);
+
+            return q.getResultList();
+        }
 }

@@ -25,6 +25,7 @@ import java.util.Scanner;
 import org.irlab.common.AppEntityManagerFactory;
 import org.irlab.model.entities.Cliente;
 import org.irlab.model.entities.Elevador;
+import org.irlab.model.entities.Role;
 import org.irlab.model.entities.Tarea;
 import org.irlab.model.entities.Tipo;
 import org.irlab.model.entities.User;
@@ -41,6 +42,8 @@ import org.irlab.model.services.TipoService;
 import org.irlab.model.services.TipoServiceImpl;
 import org.irlab.model.services.ElevadorService;
 import org.irlab.model.services.ElevadorServiceImpl;
+import org.irlab.model.services.RoleService;
+import org.irlab.model.services.RoleServiceImpl;
 
 public class App {
 
@@ -65,6 +68,7 @@ public class App {
     private static VehicleService vehiculoService = null;
     private static TipoService tipoService = null;
     private static ElevadorService elevadorService = null;
+    private static RoleService roleService = null;
 
     private static Scanner scanner = null;
 
@@ -74,6 +78,7 @@ public class App {
         vehiculoService = new VehicleServiceImpl();
         tipoService = new TipoServiceImpl();
         elevadorService = new ElevadorServiceImpl();
+        roleService = new RoleServiceImpl();
     }
 
     private static void shutdown() throws SQLException {
@@ -247,6 +252,7 @@ public class App {
         String telefono = readInput("Teléfono:", "Es necesario introducir telefono");
         cliente.setTelefono(telefono);
 
+
         clientService.insertClient(cliente);
 
         return cliente;
@@ -271,9 +277,9 @@ public class App {
 
         List<Cliente> clientes = clientService.listAllClients();
 
-        int index = 0;
         boolean inputInvalid = true;
         do {
+            int index = 0;
             for (Cliente cliente : clientes) {
                 System.out.printf("%d ) %s \n", index, cliente.toString());
                 index++;
@@ -367,14 +373,30 @@ public class App {
             exists = userService.exists(nombre);
         } while(exists);
 
+        User user = new User(nombre);
 
         System.out.println("Introduzca contraseña");
         String password = readInput("Contraseña:", "Es necesario introducir una contraseña");
 
+        List<Role> roles = roleService.listAllRoles();
 
-        User user = new User(nombre);
+        System.out.println("Con rol de: ");
+        boolean inputInvalid = true;
+        do {
+            int index = 0;
+            for (Role r : roles) {
+                System.out.printf("%d ) %s \n", index, r.toString());
+                index++;
+            }
+            String seleccion =  readInput("Selección: ", "Seleccione un valor");
+            if (roles.size() > 0 && Integer.parseInt(seleccion) >= 0 && Integer.parseInt(seleccion) < roles.size()) {
+                user.setRole(roles.get(Integer.parseInt(seleccion)));
+                inputInvalid = false;
+            } 
+        } while (inputInvalid);
+
+
         user.setPassword(password);
-
         userService.insertUser(user);
 
         return user;

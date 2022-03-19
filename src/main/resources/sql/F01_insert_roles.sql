@@ -1,3 +1,3 @@
 INSERT INTO Roles (roleName)
-VALUES	'admin', 'user'
+VALUES	'admin', 'agent', 'client'
 
