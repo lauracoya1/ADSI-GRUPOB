@@ -16,7 +16,7 @@ public class ClientDao {
      * Update the client details
      *
      * @param em   the entity manager
-     * @param client the client
+     * @param cliente the client
      */
     public static void update(EntityManager em, Cliente cliente) {
         em.persist(cliente);
@@ -26,7 +26,7 @@ public class ClientDao {
      * Find cliente by DNI
      *
      * @param em   the entity manager
-     * @param DNI the client dni
+     * @param dni the client dni
      * @return the client or an empty optional if it does not exists
      * @throws NonUniqueResultException if there is more than one client with the name
      */
