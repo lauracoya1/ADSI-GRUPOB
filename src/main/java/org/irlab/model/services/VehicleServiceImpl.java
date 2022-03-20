@@ -62,7 +62,22 @@ public class VehicleServiceImpl implements VehicleService {
         }
 
     }
+    @Override
+    public List<Vehiculo> listVehiculosFromUser(String dni){
+        EntityManager em = AppEntityManagerFactory.getInstance().createEntityManager();
 
+        try{
+            List<Vehiculo> clientList = VehiculoDao.getVehiclesFromUser(em,dni);
+            em.getTransaction().begin();
+            em.getTransaction().commit();
+            return clientList;
+        }catch (Exception e){
+            em.getTransaction().rollback();
+            throw e;
+        }finally {
+            em.close();
+        }
+    }
     @Override
     public void insertVehiculo(@Nonnull Vehiculo vehiculo) {
         Preconditions.checkNotNull(vehiculo, "Vehiculo cannot be null");

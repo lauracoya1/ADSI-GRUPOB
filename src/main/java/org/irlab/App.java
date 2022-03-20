@@ -53,6 +53,8 @@ import org.irlab.model.services.TrabajoServiceImpl;
 import org.irlab.model.services.TareaService;
 import org.irlab.model.services.TareaServiceImpl;
 
+import javax.annotation.processing.SupportedSourceVersion;
+
 public class App {
 
 
@@ -454,39 +456,49 @@ public class App {
         Tarea tarea = new Tarea();
         boolean inputInvalid = true;
 
-        // ADD TIPO
-        System.out.println("Tipo de tarea: ");
-        List<Tipo> tipos = tipoService.listAllTipos();
+        // ADD CLIENTES
+         System.out.println("Clientes: ");
+         List<Cliente> clientes = clientService.listAllClients();
+         Cliente cliente = null;
+         do {
+             int index = 0;
+             for (Cliente c: clientes){
+                 System.out.printf("%d ) %s \n", index, c.toString());
+                 index++;
+             }
+             System.out.println("n ) Nuevo cliente");
+             String seleccion =  readInput("Selección: ", "Seleccione un valor");
+             if (seleccion.equals("n")) {
+
+                 addClient();
+                 inputInvalid = false;
+             } else if (clientes.size() > 0 && Integer.parseInt(seleccion) >= 0 && Integer.parseInt(seleccion) < clientes.size()) {
+                 cliente = clientes.get(Integer.parseInt(seleccion));
+                 inputInvalid = false;
+             }
+         } while (inputInvalid);
+
+        //ADD VEHICULO
+        System.out.println("Vehiculos: ");
+        List<Vehiculo> vehiculos = vehiculoService.listVehiculosFromUser(cliente.getDni());
         do {
             int index = 0;
-            for (Tipo t : tipos) {
-                System.out.printf("%d ) %s \n", index, t.toString());
+            for (Vehiculo v: vehiculos){
+                System.out.printf("%d ) %s \n", index, v.toString());
                 index++;
             }
+            System.out.println("n ) Nuevo vehiculo");
             String seleccion =  readInput("Selección: ", "Seleccione un valor");
-            if (tipos.size() > 0 && Integer.parseInt(seleccion) >= 0 && Integer.parseInt(seleccion) < tipos.size()) {
-                tarea.setTipo(tipos.get(Integer.parseInt(seleccion)));
-                inputInvalid = false;
-            } 
-        } while (inputInvalid);
 
-        // ADD ELEVADOR
-        inputInvalid = true;
-        System.out.println("Elevador asignado: ");
-        List<Elevador> elevadores = elevadorService.listAllElevadores();
-        do {
-            int index = 0;
-            for (Elevador e : elevadores) {
-                System.out.printf("%d ) %s \n", index, e.toString());
-                index++;
+            if (seleccion.equals("n")) {
+
+                addVehiculo();
+                inputInvalid = false;
+            } else if (vehiculos.size() > 0 && Integer.parseInt(seleccion) >= 0 && Integer.parseInt(seleccion) < vehiculos.size()) {
+                tarea.setVehiculo(vehiculos.get(Integer.parseInt(seleccion)));
+                inputInvalid = false;
             }
-            String seleccion =  readInput("Selección: ", "Seleccione un valor");
-            if (elevadores.size() > 0 && Integer.parseInt(seleccion) >= 0 && Integer.parseInt(seleccion) < elevadores.size()) {
-                tarea.setElevador(elevadores.get(Integer.parseInt(seleccion)));
-                inputInvalid = false;
-            } 
         } while (inputInvalid);
-
         // ADD TRABAJO
         inputInvalid = true;
         System.out.println("Trabajo asignado: ");
@@ -504,6 +516,21 @@ public class App {
             } 
         } while (inputInvalid);
 
+        // ADD TIPO
+        System.out.println("Tipo de tarea: ");
+        List<Tipo> tipos = tipoService.listAllTipos();
+        do {
+            int index = 0;
+            for (Tipo t : tipos) {
+                System.out.printf("%d ) %s \n", index, t.toString());
+                index++;
+            }
+            String seleccion =  readInput("Selección: ", "Seleccione un valor");
+            if (tipos.size() > 0 && Integer.parseInt(seleccion) >= 0 && Integer.parseInt(seleccion) < tipos.size()) {
+                tarea.setTipo(tipos.get(Integer.parseInt(seleccion)));
+                inputInvalid = false;
+            }
+        } while (inputInvalid);
 
         // ADD FECHA
         String fecha, hora;
@@ -549,6 +576,23 @@ public class App {
                     break;
             }
         } while (addOther);
+
+        // ADD ELEVADOR
+        inputInvalid = true;
+        System.out.println("Elevador asignado: ");
+        List<Elevador> elevadores = elevadorService.listAllElevadores();
+        do {
+            int index = 0;
+            for (Elevador e : elevadores) {
+                System.out.printf("%d ) %s \n", index, e.toString());
+                index++;
+            }
+            String seleccion =  readInput("Selección: ", "Seleccione un valor");
+            if (elevadores.size() > 0 && Integer.parseInt(seleccion) >= 0 && Integer.parseInt(seleccion) < elevadores.size()) {
+                tarea.setElevador(elevadores.get(Integer.parseInt(seleccion)));
+                inputInvalid = false;
+            }
+        } while (inputInvalid);
 
         tareaService.insertTarea(tarea);
 

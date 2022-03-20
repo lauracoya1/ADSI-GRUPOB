@@ -45,6 +45,8 @@ public class Tarea {
   private LocalDateTime dateTime;
   private int duracion;
 
+  private Vehiculo vehiculo;
+
   public Tarea () {
       this.mecanicos = new HashSet<User>();
   }
@@ -114,4 +116,9 @@ public class Tarea {
       this.trabajo = trabajo;
   }
 
+  public Vehiculo getVehiculo(){return vehiculo;}
+
+    public void setVehiculo(Vehiculo vehiculo) {
+        this.vehiculo = vehiculo;
+    }
 }
