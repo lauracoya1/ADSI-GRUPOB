@@ -269,6 +269,18 @@ public class App {
         String nombre = readInput("Nombre:", "Es necesario introducir nombre");
         cliente.setNombre(nombre);
 
+        System.out.println("Introduzca primer apellido del cliente");
+        String primer_apellido = readInput("Primer apellido:", "Es necesario introducir apellido");
+        cliente.setApellido1(primer_apellido);
+
+        System.out.println("Introduzca segundo apellido del cliente");
+        String segundo_apellido = readInput("Segundo apellido:", "Es necesario introducir apellido");
+        cliente.setApellido2(segundo_apellido);
+
+        System.out.println("Introduzca fecha de nacimiento del cliente");
+        String fechanac = readInput("Fecha:", "Es necesario introducir fecha de nacimiento");
+        cliente.setFechaNacimiento(LocalDate.parse(fechanac));
+
         System.out.println("Introduzca telefono de cliente");
         String telefono = readInput("Teléfono:", "Es necesario introducir telefono");
         cliente.setTelefono(telefono);
