@@ -24,6 +24,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Scanner;
+import java.util.Set;
 
 import org.irlab.common.AppEntityManagerFactory;
 import org.irlab.model.entities.Cliente;
@@ -69,6 +70,7 @@ public class App {
         ADD_ELEVATOR,
         ADD_USER,
         ADD_TASK,
+        LIST_JOBS,
         EXIT
     }
 
@@ -120,6 +122,7 @@ public class App {
         System.out.println("  8) Add elevator");
         System.out.println("  9) Add user");
         System.out.println("  a) Add task");
+        System.out.println("  b) List Jobs");
 
         System.out.println();
         System.out.println("  q) Exit");
@@ -153,6 +156,8 @@ public class App {
                         return Command.ADD_USER;
                     case 'a':
                         return Command.ADD_TASK;
+                    case 'b':
+                        return Command.LIST_JOBS;
                     case 'q':
                         return Command.EXIT;
                     default:
@@ -610,6 +615,28 @@ public class App {
 
         return tarea;
     }
+
+    public static void listJobs(){
+        List<Trabajo> trabajos = trabajoService.listAllTrabajos();
+
+        for (Trabajo t : trabajos){
+            System.out.println("\nTrabajo " + t.toString() + ") \n");
+            System.out.println("Presupuesto:" + t.getPresupuesto());
+            Set<Tarea> tareas = t.getTareas();
+            if (tareas.isEmpty()){
+                System.out.println("No existen tareas asociadas a este trabajo");
+            }else {
+                for (Tarea tarea : tareas) {
+                    System.out.println("  Tarea " + tarea.getId() + ") \n");
+                    System.out.println("  Tipo de tarea: " + tarea.getTipo());
+                    System.out.println("  Hora de inicio: " + tarea.getDateTime());
+                    System.out.println("  Lugar: Elevador " + tarea.getElevador().getCodigo());
+                    System.out.println("  Vehiculo con matrícula: " + t.getVehiculo().getMatricula());
+                    System.out.println("  Mecánico: " + t.getResponsable().getName() + " con id " + t.getResponsable().getId());
+                }
+            }
+        }
+    }
     public static void main(String[] args) throws SQLException, NoTareasException, UserNotFoundException {
         init();
         boolean exit = false;
@@ -648,6 +675,9 @@ public class App {
                     break;
                 case ADD_TASK:
                     addTask();
+                    break;
+                case LIST_JOBS:
+                    listJobs();
                     break;
                 case EXIT:
                     exit = true;
