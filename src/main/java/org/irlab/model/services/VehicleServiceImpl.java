@@ -68,11 +68,8 @@ public class VehicleServiceImpl implements VehicleService {
 
         try{
             List<Vehiculo> clientList = VehiculoDao.getVehiclesFromUser(em,dni);
-            em.getTransaction().begin();
-            em.getTransaction().commit();
             return clientList;
         }catch (Exception e){
-            em.getTransaction().rollback();
             throw e;
         }finally {
             em.close();

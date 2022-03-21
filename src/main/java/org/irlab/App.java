@@ -18,7 +18,6 @@ package org.irlab;
 
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -27,34 +26,9 @@ import java.util.Scanner;
 import java.util.Set;
 
 import org.irlab.common.AppEntityManagerFactory;
-import org.irlab.model.entities.Cliente;
-import org.irlab.model.entities.Elevador;
-import org.irlab.model.entities.Role;
-import org.irlab.model.entities.Tarea;
-import org.irlab.model.entities.Tipo;
-import org.irlab.model.entities.Trabajo;
-import org.irlab.model.entities.User;
-import org.irlab.model.entities.Vehiculo;
-import org.irlab.model.exceptions.NoTareasException;
-import org.irlab.model.exceptions.UserNotFoundException;
-import org.irlab.model.services.UserService;
-import org.irlab.model.services.UserServiceImpl;
-import org.irlab.model.services.ClientService;
-import org.irlab.model.services.ClientServiceImpl;
-import org.irlab.model.services.VehicleService;
-import org.irlab.model.services.VehicleServiceImpl;
-import org.irlab.model.services.TipoService;
-import org.irlab.model.services.TipoServiceImpl;
-import org.irlab.model.services.ElevadorService;
-import org.irlab.model.services.ElevadorServiceImpl;
-import org.irlab.model.services.RoleService;
-import org.irlab.model.services.RoleServiceImpl;
-import org.irlab.model.services.TrabajoService;
-import org.irlab.model.services.TrabajoServiceImpl;
-import org.irlab.model.services.TareaService;
-import org.irlab.model.services.TareaServiceImpl;
-
-import javax.annotation.processing.SupportedSourceVersion;
+import org.irlab.model.entities.*;
+import org.irlab.model.exceptions.*;
+import org.irlab.model.services.*;
 
 public class App {
 
@@ -110,20 +84,32 @@ public class App {
         }
     }
 
-    private static Command getCommand() {
+    private static Command getCommand(String currentUser) throws UserNotFoundException {
+
+        User user = null ;
+        try {
+            user = userService.getByUserName(currentUser);
+        } catch(UserNotFoundException e){
+            throw e;
+        }
+
+        
         System.out.println("Choose an option:");
         System.out.println("  1) Greet user");
         System.out.println("  2) Change user greeting");
         System.out.println("  3) Close user session");
         System.out.println("  4) Show schedule");
-        System.out.println("  5) Add client");
-        System.out.println("  6) Add vehicle");
-        System.out.println("  7) Add type");
-        System.out.println("  8) Add elevator");
-        System.out.println("  9) Add user");
-        System.out.println("  a) Add task");
-        System.out.println("  b) List Jobs");
 
+        if ( userService.isAdmin(user) ) {
+            System.out.println("  5) Add client");
+            System.out.println("  6) Add vehicle");
+            System.out.println("  7) Add type");
+            System.out.println("  8) Add elevator");
+            System.out.println("  9) Add agent");
+            System.out.println("  a) Add task");
+            System.out.println("  b) List Jobs");
+
+        }
         System.out.println();
         System.out.println("  q) Exit");
         System.out.println();
@@ -135,33 +121,49 @@ public class App {
             } else if (input.length() > 1) {
                 System.err.println(input + " is not a valid option");
             } else {
-                switch (input.charAt(0)) {
-                    case '1':
-                        return Command.GREET_USER;
-                    case '2':
-                        return Command.CHANGE_GREETING;
-                    case '3':
-                        return Command.CLOSE_SESSION;
-                    case '4':
-                        return Command.SHOW_SCHEDULE;
-                    case '5':
-                        return Command.ADD_CLIENT;
-                    case '6':
-                        return Command.ADD_VEHICLE;
-                    case '7':
-                        return Command.ADD_TYPE;
-                    case '8':
-                        return Command.ADD_ELEVATOR;
-                    case '9':
-                        return Command.ADD_USER;
-                    case 'a':
-                        return Command.ADD_TASK;
-                    case 'b':
-                        return Command.LIST_JOBS;
-                    case 'q':
-                        return Command.EXIT;
-                    default:
-                        System.out.println(input + " is not a valid option");
+                if ( userService.isAdmin(user)) {
+                    switch (input.charAt(0)) {
+                        case '1':
+                            return Command.GREET_USER;
+                        case '2':
+                            return Command.CHANGE_GREETING;
+                        case '3':
+                            return Command.CLOSE_SESSION;
+                        case '4':
+                            return Command.SHOW_SCHEDULE;
+                        case '5':
+                            return Command.ADD_CLIENT;
+                        case '6':
+                            return Command.ADD_VEHICLE;
+                        case '7':
+                            return Command.ADD_TYPE;
+                        case '8':
+                            return Command.ADD_ELEVATOR;
+                        case '9':
+                            return Command.ADD_USER;
+                        case 'a':
+                            return Command.ADD_TASK;
+                        case 'b':
+                            return Command.LIST_JOBS;
+                        case 'q':
+                            return Command.EXIT;
+                        default:
+                            System.out.println(input + " is not a valid option");
+                    }
+                } else { 
+                    switch (input.charAt(0)) {
+                        case '1':
+                            return Command.GREET_USER;
+                        case '2':
+                            return Command.CHANGE_GREETING;
+                        case '3':
+                            return Command.CLOSE_SESSION;
+                        case '4':
+                            return Command.SHOW_SCHEDULE;
+                        default:
+                            System.out.println(input + " is not a valid option");
+
+                    }
                 }
             }
         }
@@ -205,8 +207,8 @@ public class App {
             System.out.println("User greeting changed");
         } catch (UserNotFoundException e) {
             System.out.println(String.format(
-                    "Greeting could not be changed, due to the following error:\n%s",
-                    e.getMessage()));
+                        "Greeting could not be changed, due to the following error:\n%s",
+                        e.getMessage()));
             currentUser = null;
         }
         return currentUser;
@@ -487,7 +489,7 @@ public class App {
              String seleccion =  readInput("Selección: ", "Seleccione un valor");
              if (seleccion.equals("n")) {
 
-                 addClient();
+                 cliente = addClient();
                  inputInvalid = false;
              } else if (clientes.size() > 0 && Integer.parseInt(seleccion) >= 0 && Integer.parseInt(seleccion) < clientes.size()) {
                  cliente = clientes.get(Integer.parseInt(seleccion));
@@ -554,45 +556,36 @@ public class App {
         System.out.println("Introduzca la fecha de inicio para la tarea");
         fecha = readInput("Fecha: ", "Debes introducir una fecha");
         System.out.println("Introduzca la hora de inicio para la tarea");
-        hora = readInput("Fecha: ", "Debes introducir una hora");
+        hora = readInput("Hora: ", "Debes introducir una hora");
         tarea.setDateTime(LocalDateTime.of(LocalDate.parse(fecha), LocalTime.parse(hora)));
 
 
 
         // ADD MECANICO
         inputInvalid = true;
-        boolean addOther = false;
         System.out.println("Seleccione un mecanico : ");
         List<User> mecanicos = userService.listAllUsers();
-        do {
-            addOther = false;
-            do {
-                int index = 0;
-                for (User u : mecanicos ) {
-                    System.out.printf("%d ) %s \n", index, u.toString());
-                    index++;
-                }
-                String seleccion =  readInput("Selección: ", "Seleccione un valor");
-                while(userService.isBusy(mecanicos.get(Integer.parseInt(seleccion)), (LocalDateTime.of(LocalDate.parse(fecha), LocalTime.parse(hora))))){
-                    System.out.println("El mecánico seleccionado está ocupado a esa hora, seleccione otro");
-                    seleccion =  readInput("Selección: ", "Seleccione un valor");
-                }
 
-                if (mecanicos.size() > 0 && Integer.parseInt(seleccion) >= 0 && Integer.parseInt(seleccion) < mecanicos.size()) {
-                    tarea.addMecanico(mecanicos.get(Integer.parseInt(seleccion)));
-                    inputInvalid = false;
-                } 
-            } while (inputInvalid);
-            String addNext =  readInput("(y)Añadir otro | (otro) No añadir otro: ", "Seleccione un valor");
-            switch(addNext){
-                case "y":
-                    addOther = true ;
-                    break;
-                default:
-                    addOther = false;
-                    break;
+        do {
+            int index = 0;
+            for (User u : mecanicos ) {
+                System.out.printf("%d ) %s \n", index, u.toString());
+                index++;
             }
-        } while (addOther);
+            String seleccion;
+
+            do {
+                seleccion =  readInput("Selección: ", "Seleccione un valor");
+
+            } while(mecanicos.size() > 0 && Integer.parseInt(seleccion) >= 0 && Integer.parseInt(seleccion) < mecanicos.size() &&
+                    userService.isBusy(mecanicos.get(Integer.parseInt(seleccion)), (LocalDateTime.of(LocalDate.parse(fecha), LocalTime.parse(hora)))));
+
+            if (mecanicos.size() > 0 && Integer.parseInt(seleccion) >= 0 && Integer.parseInt(seleccion) < mecanicos.size()) {
+                tarea.addMecanico(mecanicos.get(Integer.parseInt(seleccion)));
+                inputInvalid = false;
+            } 
+        } while (inputInvalid);
+
 
         // ADD ELEVADOR
         inputInvalid = true;
@@ -620,21 +613,26 @@ public class App {
         List<Trabajo> trabajos = trabajoService.listAllTrabajos();
 
         for (Trabajo t : trabajos){
-            System.out.println("\nTrabajo " + t.toString() + ") \n");
+            System.out.println("Trabajo " + t.toString() + ")");
             System.out.println("Presupuesto:" + t.getPresupuesto());
             Set<Tarea> tareas = t.getTareas();
             if (tareas.isEmpty()){
                 System.out.println("No existen tareas asociadas a este trabajo");
             }else {
                 for (Tarea tarea : tareas) {
-                    System.out.println("  Tarea " + tarea.getId() + ") \n");
+                    System.out.println("  Tarea " + tarea.getId() + ")");
                     System.out.println("  Tipo de tarea: " + tarea.getTipo());
                     System.out.println("  Hora de inicio: " + tarea.getDateTime());
                     System.out.println("  Lugar: Elevador " + tarea.getElevador().getCodigo());
                     System.out.println("  Vehiculo con matrícula: " + t.getVehiculo().getMatricula());
-                    System.out.println("  Mecánico: " + t.getResponsable().getName() + " con id " + t.getResponsable().getId());
+                    System.out.println("  Mecanicos:");
+
+                    for (User u: tarea.getMecanicos()) {
+                        System.out.println("  \tMecánico: " + u.getName() + " con id " + u.getId());
+                    }
                 }
             }
+            System.out.println("");
         }
     }
     public static void main(String[] args) throws SQLException, NoTareasException, UserNotFoundException {
@@ -644,7 +642,7 @@ public class App {
         String currentUser = whoAreYou();
         while (!exit) {
             System.out.println();
-            Command command = getCommand();
+            Command command = getCommand(currentUser);
             switch (command) {
                 case GREET_USER:
                     currentUser = greetUser(currentUser);

@@ -55,9 +55,9 @@ public class VehiculoDao {
     }
 
     public static List<Vehiculo> getVehiclesFromUser (EntityManager em, String dni){
-        TypedQuery<Vehiculo> q = em.createQuery("SELECT v FROM Vehiculo v WHERE v.client_dni = :dni",
+        TypedQuery<Vehiculo> q = em.createQuery("SELECT v FROM Vehiculo v WHERE v.cliente.dni = :dni",
                 Vehiculo.class);
-        q.setParameter("client_dni",dni );
+        q.setParameter("dni",dni );
         return q.getResultList();
     }
 }

@@ -185,7 +185,8 @@ public class UserServiceImpl implements UserService {
             List<Tarea> tareaList = UserDao.getTareasUser(em, u);
 
             for (Tarea tarea: tareaList){
-                if(tarea.getDateTime() == fechaHora){
+                
+                if(tarea.getDateTime().equals(fechaHora)){
                     return true;
                 }
             }
@@ -259,4 +260,19 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    @Override
+    public boolean isAdmin(User user) {
+        try {
+            if ( !user.getRole().getRoleName().equals("admin") ) {
+                return false;
+            }
+
+            return true;
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
+        return false;
+    }
 }

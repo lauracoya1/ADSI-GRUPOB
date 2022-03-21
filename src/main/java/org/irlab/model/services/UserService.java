@@ -65,6 +65,7 @@ public interface UserService {
     List<Tarea> showHorario(String user, LocalDate fecha) throws NoTareasException;
 
     boolean isBusy(User u, LocalDateTime fechaHora);
+    boolean isAdmin(User user);
 
     User getByUserName(String user) throws UserNotFoundException;
 }
