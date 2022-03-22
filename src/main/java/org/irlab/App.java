@@ -317,8 +317,8 @@ public class App {
         Vehiculo vehiculo = new Vehiculo(matricula);
         vehiculo.setTipo(tipo);
 
-        List<Cliente> clientes = clientService.listAllClients();
 
+        List<Cliente> clientes = clientService.listAllClients();
         boolean inputInvalid = true;
         do {
             int index = 0;
@@ -327,7 +327,7 @@ public class App {
                 index++;
             }
             System.out.println(" n ) Nuevo cliente");
-            String seleccion =  readInput("Selección: ", "Seleccione un valor");
+            String seleccion = readInput("Selección: ", "Seleccione un valor");
 
             if (seleccion.equals("n")) {
 
@@ -336,8 +336,9 @@ public class App {
             } else if (clientes.size() > 0 && Integer.parseInt(seleccion) >= 0 && Integer.parseInt(seleccion) < clientes.size()) {
                 vehiculo.setCliente(clientes.get(Integer.parseInt(seleccion)));
                 inputInvalid = false;
-            } 
+            }
         } while (inputInvalid);
+
 
         vehiculoService.insertVehiculo(vehiculo);
 
@@ -478,7 +479,7 @@ public class App {
         boolean inputInvalid = true;
 
         // ADD CLIENTES
-         System.out.println("Clientes: ");
+         System.out.println("Seleccione un cliente: ");
          List<Cliente> clientes = clientService.listAllClients();
          Cliente cliente = null;
          do {
@@ -500,7 +501,9 @@ public class App {
          } while (inputInvalid);
 
         //ADD VEHICULO
-        System.out.println("Vehiculos: ");
+
+        inputInvalid = true;
+        System.out.println("Seleccione un vehiculo: ");
         List<Vehiculo> vehiculos = vehiculoService.listVehiculosFromUser(cliente.getDni());
         do {
             int index = 0;
@@ -512,17 +515,18 @@ public class App {
             String seleccion =  readInput("Selección: ", "Seleccione un valor");
 
             if (seleccion.equals("n")) {
-
-                addVehiculo();
+                tarea.setVehiculo(addVehiculo());
                 inputInvalid = false;
             } else if (vehiculos.size() > 0 && Integer.parseInt(seleccion) >= 0 && Integer.parseInt(seleccion) < vehiculos.size()) {
                 tarea.setVehiculo(vehiculos.get(Integer.parseInt(seleccion)));
                 inputInvalid = false;
             }
         } while (inputInvalid);
+
         // ADD TRABAJO
+
         inputInvalid = true;
-        System.out.println("Trabajo asignado: ");
+        System.out.println("Seleccione Trabajo: ");
         List<Trabajo> trabajos = trabajoService.listAllTrabajos();
         do {
             int index = 0;
@@ -538,7 +542,9 @@ public class App {
         } while (inputInvalid);
 
         // ADD TIPO
-        System.out.println("Tipo de tarea: ");
+
+        inputInvalid = true;
+        System.out.println("Seleccione el Tipo de tarea: ");
         List<Tipo> tipos = tipoService.listAllTipos();
         do {
             int index = 0;
@@ -555,9 +561,9 @@ public class App {
 
         // ADD FECHA
         String fecha, hora;
-        System.out.println("Introduzca la fecha de inicio para la tarea");
+        System.out.println("Introduzca la fecha para la tarea");
         fecha = readInput("Fecha: ", "Debes introducir una fecha");
-        System.out.println("Introduzca la hora de inicio para la tarea");
+        System.out.println("Introduzca la hora para la tarea");
         hora = readInput("Hora: ", "Debes introducir una hora");
         tarea.setDateTime(LocalDateTime.of(LocalDate.parse(fecha), LocalTime.parse(hora)));
 
@@ -591,7 +597,7 @@ public class App {
 
         // ADD ELEVADOR
         inputInvalid = true;
-        System.out.println("Elevador asignado: ");
+        System.out.println("Seleccione un elevador: ");
         List<Elevador> elevadores = elevadorService.listAllElevadores();
         do {
             int index = 0;
@@ -626,7 +632,7 @@ public class App {
                     System.out.println("  Tipo de tarea: " + tarea.getTipo());
                     System.out.println("  Hora de inicio: " + tarea.getDateTime());
                     System.out.println("  Lugar: Elevador " + tarea.getElevador().getCodigo());
-                    System.out.println("  Vehiculo con matrícula: " + t.getVehiculo().getMatricula());
+                    System.out.println("  Vehiculo con matrícula: " + tarea.getVehiculo().getMatricula());
                     System.out.println("  Mecanicos:");
 
                     for (User u: tarea.getMecanicos()) {

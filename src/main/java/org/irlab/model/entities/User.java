@@ -181,8 +181,6 @@ public class User {
         StringBuilder sb = new StringBuilder();
         sb.append("Usuario: ")
             .append(this.getName())
-            .append(" con DNI: ")
-            .append(this.dni)
             .append("(" + this.role.getRoleName() + ")");
         return sb.toString();
     }
