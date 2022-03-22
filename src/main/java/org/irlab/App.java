@@ -160,6 +160,8 @@ public class App {
                             return Command.CLOSE_SESSION;
                         case '4':
                             return Command.SHOW_SCHEDULE;
+                        case 'q':
+                            return Command.EXIT;
                         default:
                             System.out.println(input + " is not a valid option");
 
