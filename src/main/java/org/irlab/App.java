@@ -527,15 +527,21 @@ public class App {
 
         inputInvalid = true;
         System.out.println("Seleccione Trabajo: ");
-        List<Trabajo> trabajos = trabajoService.listAllTrabajos();
+        String matricula = tarea.getVehiculo().getMatricula();
+        List<Trabajo> trabajos = trabajoService.listTrabajosFromVehicle(matricula);
         do {
             int index = 0;
             for (Trabajo t : trabajos ) {
                 System.out.printf("%d ) %s \n", index, t.toString());
                 index++;
             }
+            System.out.println("n ) Nuevo trabajo");
             String seleccion =  readInput("Selección: ", "Seleccione un valor");
-            if (trabajos.size() > 0 && Integer.parseInt(seleccion) >= 0 && Integer.parseInt(seleccion) < trabajos.size()) {
+
+            if (seleccion.equals("n")) {
+                //tarea.setTrabajo(addTrabajo());
+                inputInvalid = false;
+            }else if (trabajos.size() > 0 && Integer.parseInt(seleccion) >= 0 && Integer.parseInt(seleccion) < trabajos.size()) {
                 tarea.setTrabajo(trabajos.get(Integer.parseInt(seleccion)));
                 inputInvalid = false;
             } 

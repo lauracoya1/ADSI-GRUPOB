@@ -48,4 +48,11 @@ public class TrabajoDao {
        
         return q.getResultList();
     }
+
+    public static List<Trabajo> getTrabajosFromVehicle(EntityManager em, String matricula){
+        TypedQuery<Trabajo> q = em.createQuery("SELECT t FROM Trabajo t WHERE t.vehiculo.matricula = :matricula"
+                , Trabajo.class);
+        q.setParameter("matricula",matricula);
+        return q.getResultList();
+    }
 }

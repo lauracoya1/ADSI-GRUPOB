@@ -29,4 +29,19 @@ public class TrabajoServiceImpl implements TrabajoService {
         }
 
     }
+
+    @Override
+    public List<Trabajo> listTrabajosFromVehicle(String matricula){
+        EntityManager em = AppEntityManagerFactory.getInstance().createEntityManager();
+
+        try {
+            List<Trabajo> trabajosList = TrabajoDao.getTrabajosFromVehicle(em,matricula);
+
+            return trabajosList;
+        } catch (Exception e) {
+            throw e;
+        } finally {
+            em.close();
+        }
+    }
 }
