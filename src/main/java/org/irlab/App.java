@@ -569,6 +569,11 @@ public class App {
         String fecha, hora;
         System.out.println("Introduzca la fecha para la tarea");
         fecha = readInput("Fecha: ", "Debes introducir una fecha");
+
+        List<LocalDateTime> slots = tareaService.findSlots(LocalDate.parse(fecha), tarea);
+        for (LocalDateTime ldt : slots) {
+            System.out.println(ldt.toString());
+        }
         System.out.println("Introduzca la hora para la tarea");
         hora = readInput("Hora: ", "Debes introducir una hora");
         tarea.setDateTime(LocalDateTime.of(LocalDate.parse(fecha), LocalTime.parse(hora)));
