@@ -490,7 +490,7 @@ public class App {
                  index++;
              }
              System.out.println("n ) Nuevo cliente");
-             String seleccion =  readInput("Selección: ", "Seleccione un valor");
+             String seleccion =  readInput("Seleccione un cliente: ", "Seleccione un valor");
              if (seleccion.equals("n")) {
 
                  cliente = addClient();
@@ -513,7 +513,7 @@ public class App {
                 index++;
             }
             System.out.println("n ) Nuevo vehiculo");
-            String seleccion =  readInput("Selección: ", "Seleccione un valor");
+            String seleccion =  readInput("Seleccione un vehiculo: ", "Seleccione un valor");
 
             if (seleccion.equals("n")) {
                 tarea.setVehiculo(addVehiculo());
@@ -537,7 +537,7 @@ public class App {
                 index++;
             }
             System.out.println("n ) Nuevo trabajo");
-            String seleccion =  readInput("Selección: ", "Seleccione un valor");
+            String seleccion =  readInput("Seleccione Trabajo: ", "Seleccione un valor");
 
             if (seleccion.equals("n")) {
                 //tarea.setTrabajo(addTrabajo());
@@ -559,7 +559,7 @@ public class App {
                 System.out.printf("%d ) %s \n", index, t.toString());
                 index++;
             }
-            String seleccion =  readInput("Selección: ", "Seleccione un valor");
+            String seleccion =  readInput("Seleccione el Tipo de Tarea: ", "Seleccione un valor");
             if (tipos.size() > 0 && Integer.parseInt(seleccion) >= 0 && Integer.parseInt(seleccion) < tipos.size()) {
                 tarea.setTipo(tipos.get(Integer.parseInt(seleccion)));
                 inputInvalid = false;
@@ -574,7 +574,7 @@ public class App {
                 System.out.println( i + " ) " + slots.get(i).toString());
             }
             System.out.println("n ) Custom");
-            String seleccion =  readInput("Selección: ", "Seleccione un valor");
+            String seleccion =  readInput("Seleccione un slot: ", "Seleccione un valor");
             if (seleccion.equals("n") ) {
                 inputInvalid = false;
                 custom = true;
@@ -603,7 +603,7 @@ public class App {
             // ADD MECANICO
             inputInvalid = true;
             System.out.println("Seleccione un mecanico : ");
-            List<User> mecanicos = userService.listAllUsers();
+            List<User> mecanicos = userService.listAllMecanicos();
 
             do {
                 int index = 0;
@@ -614,7 +614,7 @@ public class App {
                 String seleccion;
 
                 do {
-                    seleccion =  readInput("Selección: ", "Seleccione un valor");
+                    seleccion =  readInput("Seleccione mecánico: ", "Seleccione un valor");
 
                 } while(mecanicos.size() > 0 && Integer.parseInt(seleccion) >= 0 && Integer.parseInt(seleccion) < mecanicos.size() &&
                         userService.isBusy(mecanicos.get(Integer.parseInt(seleccion)), tarea.getDateTime()));
@@ -636,7 +636,7 @@ public class App {
                     System.out.printf("%d ) %s \n", index, e.toString());
                     index++;
                 }
-                String seleccion =  readInput("Selección: ", "Seleccione un valor");
+                String seleccion =  readInput("Seleccione un elevador: ", "Seleccione un valor");
                 if (elevadores.size() > 0 && Integer.parseInt(seleccion) >= 0 && Integer.parseInt(seleccion) < elevadores.size()) {
                     tarea.setElevador(elevadores.get(Integer.parseInt(seleccion)));
                     inputInvalid = false;

@@ -135,145 +135,162 @@ public class UserServiceImpl implements UserService {
 
   }
 
-    @Override
-    public List<Tarea> showHorario(String user, LocalDate fecha) throws NoTareasException {
-        EntityManager em = AppEntityManagerFactory.getInstance().createEntityManager();
-        try {
-            //Buscamos el usuario con ese nombre en BD
-            Optional<User> usuario = UserDao.findByName(em, user);
-            User u = usuario.orElseGet(() -> new User(DEFAULT_GREETING, DEFAULT_USER, new Role(DEFAULT_ROLE)));
-            //Inicializamos las listas
-            List<Tarea> tareaList = new ArrayList<Tarea>(); //Lista sin filtrar
-            List<Tarea> tareasOnDate = new ArrayList<Tarea>(); //Lista filtrada por fecha
+  @Override
+  public List<User> listAllMecanicos() {
+      EntityManager em = AppEntityManagerFactory.getInstance().createEntityManager();
+      try {
+          List<User> userList = UserDao.getTechs(em);
+          em.getTransaction().begin();
+          em.getTransaction().commit();
+          return userList;
+      } catch (Exception e) {
+          em.getTransaction().rollback();
+          throw e;
+      } finally {
+          em.close();
+      }
 
-            //En funcion del rol mostraremos
-            if (u.getRole().getRoleName().equals("admin")){ //Las tareas de todos los usuarios para esa fecha
-                tareaList = TareaDao.getAllTareas(em);
-            }
-            if (u.getRole().getRoleName().equals("tech")){ //Sus propias tareas para esa fecha
-                tareaList = UserDao.getTareasUser(em, u);
-            }
+  }
 
-            if(tareaList.isEmpty()){
-                throw new NoTareasException(user);
-            }else{
-                for (Tarea tarea: tareaList){
-                    if(tarea.getDateTime().getDayOfYear() == fecha.getDayOfYear()){
-                        tareasOnDate.add(tarea);
-                    }
-                }
+  @Override
+  public List<Tarea> showHorario(String user, LocalDate fecha) throws NoTareasException {
+      EntityManager em = AppEntityManagerFactory.getInstance().createEntityManager();
+      try {
+          //Buscamos el usuario con ese nombre en BD
+          Optional<User> usuario = UserDao.findByName(em, user);
+          User u = usuario.orElseGet(() -> new User(DEFAULT_GREETING, DEFAULT_USER, new Role(DEFAULT_ROLE)));
+          //Inicializamos las listas
+          List<Tarea> tareaList = new ArrayList<Tarea>(); //Lista sin filtrar
+          List<Tarea> tareasOnDate = new ArrayList<Tarea>(); //Lista filtrada por fecha
 
-                if(tareasOnDate.isEmpty()){
-                    throw new NoTareasException(user);
-                }
-            }
-            return tareasOnDate;
-        } catch (NoTareasException noTareasException) {
-            System.out.println("El usuario no tiene tareas para ese día");
-            return new ArrayList<Tarea>();
-        } finally {
-            em.close();
-        }
-    }
+          //En funcion del rol mostraremos
+          if (u.getRole().getRoleName().equals("admin")){ //Las tareas de todos los usuarios para esa fecha
+              tareaList = TareaDao.getAllTareas(em);
+          }
+          if (u.getRole().getRoleName().equals("tech")){ //Sus propias tareas para esa fecha
+              tareaList = UserDao.getTareasUser(em, u);
+          }
 
-    @Override
-    public boolean isBusy(User mecanico, LocalDateTime fechaHora) {
-        EntityManager em = AppEntityManagerFactory.getInstance().createEntityManager();
-        try {
-            //Buscamos el usuario con ese nombre en BD
-            Optional<User> usuario = UserDao.findByName(em, mecanico.getName());
-            User u = usuario.orElseGet(() -> new User(DEFAULT_GREETING, DEFAULT_USER, new Role(DEFAULT_ROLE)));
-            List<Tarea> tareaList = UserDao.getTareasUser(em, u);
+          if(tareaList.isEmpty()){
+              throw new NoTareasException(user);
+          }else{
+              for (Tarea tarea: tareaList){
+                  if(tarea.getDateTime().getDayOfYear() == fecha.getDayOfYear()){
+                      tareasOnDate.add(tarea);
+                  }
+              }
 
-            for (Tarea tarea: tareaList){
-                
-                if(tarea.getDateTime().equals(fechaHora)){
-                    return true;
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        finally {
-            em.close();
-        }
-        return false;
-    }
+              if(tareasOnDate.isEmpty()){
+                  throw new NoTareasException(user);
+              }
+          }
+          return tareasOnDate;
+      } catch (NoTareasException noTareasException) {
+          System.out.println("El usuario no tiene tareas para ese día");
+          return new ArrayList<Tarea>();
+      } finally {
+          em.close();
+      }
+  }
 
-    @Override
-    public User getByUserName(String user) throws UserNotFoundException {
-        Preconditions.checkNotNull(user, "name cannot be null");
+  @Override
+  public boolean isBusy(User mecanico, LocalDateTime fechaHora) {
+      EntityManager em = AppEntityManagerFactory.getInstance().createEntityManager();
+      try {
+          //Buscamos el usuario con ese nombre en BD
+          Optional<User> usuario = UserDao.findByName(em, mecanico.getName());
+          User u = usuario.orElseGet(() -> new User(DEFAULT_GREETING, DEFAULT_USER, new Role(DEFAULT_ROLE)));
+          List<Tarea> tareaList = UserDao.getTareasUser(em, u);
 
-        EntityManager em = AppEntityManagerFactory.getInstance().createEntityManager();
-        try {
-            Optional<User> maybeUser = UserDao.findByName(em, user);
-            User u = maybeUser.orElseGet(() -> new User(DEFAULT_GREETING, DEFAULT_USER, new Role(DEFAULT_ROLE)));
+          for (Tarea tarea: tareaList){
 
-            return (u);
-        } finally {
-            em.close();
-        }    }
+              if(tarea.getDateTime().equals(fechaHora)){
+                  return true;
+              }
+          }
+      } catch (Exception e) {
+          e.printStackTrace();
+      }
+      finally {
+          em.close();
+      }
+      return false;
+  }
 
-    @Override
-    public boolean exists(@Nonnull String nombre) {
-        Preconditions.checkNotNull(nombre, "Nombre cannot be null");
+  @Override
+  public User getByUserName(String user) throws UserNotFoundException {
+      Preconditions.checkNotNull(user, "name cannot be null");
 
-        if (nombre.equals("")) {
-            return false;
-        }
+      EntityManager em = AppEntityManagerFactory.getInstance().createEntityManager();
+      try {
+          Optional<User> maybeUser = UserDao.findByName(em, user);
+          User u = maybeUser.orElseGet(() -> new User(DEFAULT_GREETING, DEFAULT_USER, new Role(DEFAULT_ROLE)));
 
-        EntityManager em = AppEntityManagerFactory.getInstance().createEntityManager();
+          return (u);
+      } finally {
+          em.close();
+      }    }
 
-        try {
-            boolean exists = UserDao
-                .findByName(em, nombre)
-                .map(c -> {
-                    return true;
-                }).orElseThrow(() -> new UserNotFoundException(String.format("with nombre %s", nombre)));
+  @Override
+  public boolean exists(@Nonnull String nombre) {
+      Preconditions.checkNotNull(nombre, "Nombre cannot be null");
 
-            return exists;
-        } catch (UserNotFoundException e) {
-            return false;
-        } catch ( Exception e ) {
-            throw e;
-        } finally {
-            em.close();
-        }
-    }
-    @Override
-    public void insertUser(@Nonnull User user) {
-        Preconditions.checkNotNull(user, "user cannot be null");
+      if (nombre.equals("")) {
+          return false;
+      }
 
-        if (exists(user.getName())){
-            System.out.println("User already present");
-            return;
-        }
-        EntityManager em = AppEntityManagerFactory.getInstance().createEntityManager();
+      EntityManager em = AppEntityManagerFactory.getInstance().createEntityManager();
 
-        try {
-            em.getTransaction().begin();
-            UserDao.update(em, user);
-            em.getTransaction().commit();
-        } catch (Exception e) {
-            throw e;
-        } finally {
-            em.close();
-        }
-    }
+      try {
+          boolean exists = UserDao
+              .findByName(em, nombre)
+              .map(c -> {
+                  return true;
+              }).orElseThrow(() -> new UserNotFoundException(String.format("with nombre %s", nombre)));
 
-    @Override
-    public boolean isAdmin(User user) {
-        try {
-            if ( !user.getRole().getRoleName().equals("admin") ) {
-                return false;
-            }
+          return exists;
+      } catch (UserNotFoundException e) {
+          return false;
+      } catch ( Exception e ) {
+          throw e;
+      } finally {
+          em.close();
+      }
+  }
+  @Override
+  public void insertUser(@Nonnull User user) {
+      Preconditions.checkNotNull(user, "user cannot be null");
 
-            return true;
-            
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        
-        return false;
-    }
+      if (exists(user.getName())){
+          System.out.println("User already present");
+          return;
+      }
+      EntityManager em = AppEntityManagerFactory.getInstance().createEntityManager();
+
+      try {
+          em.getTransaction().begin();
+          UserDao.update(em, user);
+          em.getTransaction().commit();
+      } catch (Exception e) {
+          throw e;
+      } finally {
+          em.close();
+      }
+  }
+
+  @Override
+  public boolean isAdmin(User user) {
+      try {
+          if ( !user.getRole().getRoleName().equals("admin") ) {
+              return false;
+          }
+
+          return true;
+
+      } catch (Exception e) {
+          e.printStackTrace();
+      }
+
+      return false;
+  }
 }

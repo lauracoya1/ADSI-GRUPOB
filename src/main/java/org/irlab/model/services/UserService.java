@@ -61,6 +61,7 @@ public interface UserService {
     boolean exists(String dni);
 
     List<User> listAllUsers();
+    List<User> listAllMecanicos();
 
     List<Tarea> showHorario(String user, LocalDate fecha) throws NoTareasException;
 

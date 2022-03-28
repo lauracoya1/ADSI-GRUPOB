@@ -179,9 +179,11 @@ public class User {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("Usuario: ")
-            .append(this.getName())
-            .append("(" + this.role.getRoleName() + ")");
+        sb.append(this.getName())
+            .append( " " )
+            .append(this.getApellido1())
+            .append( " " )
+            .append(this.getApellido2());
         return sb.toString();
     }
 }
