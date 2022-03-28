@@ -575,15 +575,15 @@ public class App {
             }
             System.out.println("n ) Custom");
             String seleccion =  readInput("Selección: ", "Seleccione un valor");
-            if (slots.size() > 0 && Integer.parseInt(seleccion) >= 0 && Integer.parseInt(seleccion) < slots.size()) {
+            if (seleccion.equals("n") ) {
+                inputInvalid = false;
+                custom = true;
+            } else if (slots.size() > 0 && Integer.parseInt(seleccion) >= 0 && Integer.parseInt(seleccion) < slots.size()) {
                 tarea.setDateTime(slots.get(Integer.parseInt(seleccion)).getFecha());
                 tarea.setElevador(slots.get(Integer.parseInt(seleccion)).getElevador());
                 tarea.addMecanico(slots.get(Integer.parseInt(seleccion)).getMecanico());
                 inputInvalid = false;
-            } else if (seleccion == "n") {
-                inputInvalid = false;
-                custom = true;
-            }
+            } 
         } while (inputInvalid);
 
 
