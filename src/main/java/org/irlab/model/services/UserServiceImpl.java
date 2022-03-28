@@ -149,7 +149,7 @@ public class UserServiceImpl implements UserService {
             if (u.getRole().getRoleName().equals("admin")){ //Las tareas de todos los usuarios para esa fecha
                 tareaList = UserDao.getAllTareas(em);
             }
-            if (u.getRole().getRoleName().equals("agent")){ //Sus propias tareas para esa fecha
+            if (u.getRole().getRoleName().equals("tech")){ //Sus propias tareas para esa fecha
                 tareaList = UserDao.getTareasUser(em, u);
             }
 

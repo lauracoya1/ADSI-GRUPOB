@@ -68,8 +68,8 @@ public class UserDao {
 
   }
 
-  public static List<Tarea> getAllTareas(EntityManager em){
-    TypedQuery<Tarea> q = em.createQuery("SELECT t FROM Tarea t", Tarea.class);
+  public static List<User> getTechs(EntityManager em) {
+    TypedQuery<User> q = em.createQuery("SELECT u FROM User u WHERE u.role.roleName = 'tech'", User.class);
     return q.getResultList();
 
   }

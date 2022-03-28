@@ -29,6 +29,7 @@ import org.irlab.common.AppEntityManagerFactory;
 import org.irlab.model.entities.*;
 import org.irlab.model.exceptions.*;
 import org.irlab.model.services.*;
+import org.irlab.model.utils.ScheduleSlot;
 
 public class App {
 
@@ -565,63 +566,84 @@ public class App {
             }
         } while (inputInvalid);
 
-        // ADD FECHA
-        String fecha, hora;
-        System.out.println("Introduzca la fecha para la tarea");
-        fecha = readInput("Fecha: ", "Debes introducir una fecha");
-
-        List<LocalDateTime> slots = tareaService.findSlots(LocalDate.parse(fecha), tarea);
-        for (LocalDateTime ldt : slots) {
-            System.out.println(ldt.toString());
-        }
-        System.out.println("Introduzca la hora para la tarea");
-        hora = readInput("Hora: ", "Debes introducir una hora");
-        tarea.setDateTime(LocalDateTime.of(LocalDate.parse(fecha), LocalTime.parse(hora)));
-
-
-
-        // ADD MECANICO
         inputInvalid = true;
-        System.out.println("Seleccione un mecanico : ");
-        List<User> mecanicos = userService.listAllUsers();
-
+        boolean custom = false;
+        List<ScheduleSlot> slots = tareaService.findSlots(LocalDateTime.now(), tarea);
         do {
-            int index = 0;
-            for (User u : mecanicos ) {
-                System.out.printf("%d ) %s \n", index, u.toString());
-                index++;
+            for (int i = 0; i < slots.size(); i++) {
+                System.out.println( i + " ) " + slots.get(i).toString());
             }
-            String seleccion;
+            System.out.println("n ) Custom");
+            String seleccion =  readInput("Selección: ", "Seleccione un valor");
+            if (slots.size() > 0 && Integer.parseInt(seleccion) >= 0 && Integer.parseInt(seleccion) < slots.size()) {
+                tarea.setDateTime(slots.get(Integer.parseInt(seleccion)).getFecha());
+                tarea.setElevador(slots.get(Integer.parseInt(seleccion)).getElevador());
+                tarea.addMecanico(slots.get(Integer.parseInt(seleccion)).getMecanico());
+                inputInvalid = false;
+            } else if (seleccion == "n") {
+                inputInvalid = false;
+                custom = true;
+            }
+        } while (inputInvalid);
+
+
+        // ADD FECHA
+        if (custom) {
+
+            String fecha, hora;
+            System.out.println("Introduzca la fecha para la tarea");
+            fecha = readInput("Fecha: ", "Debes introducir una fecha");
+
+            System.out.println("Introduzca la hora para la tarea");
+            hora = readInput("Hora: ", "Debes introducir una hora");
+            tarea.setDateTime(LocalDateTime.of(LocalDate.parse(fecha), LocalTime.parse(hora)));
+
+
+
+            // ADD MECANICO
+            inputInvalid = true;
+            System.out.println("Seleccione un mecanico : ");
+            List<User> mecanicos = userService.listAllUsers();
 
             do {
-                seleccion =  readInput("Selección: ", "Seleccione un valor");
+                int index = 0;
+                for (User u : mecanicos ) {
+                    System.out.printf("%d ) %s \n", index, u.toString());
+                    index++;
+                }
+                String seleccion;
 
-            } while(mecanicos.size() > 0 && Integer.parseInt(seleccion) >= 0 && Integer.parseInt(seleccion) < mecanicos.size() &&
-                    userService.isBusy(mecanicos.get(Integer.parseInt(seleccion)), (LocalDateTime.of(LocalDate.parse(fecha), LocalTime.parse(hora)))));
+                do {
+                    seleccion =  readInput("Selección: ", "Seleccione un valor");
 
-            if (mecanicos.size() > 0 && Integer.parseInt(seleccion) >= 0 && Integer.parseInt(seleccion) < mecanicos.size()) {
-                tarea.addMecanico(mecanicos.get(Integer.parseInt(seleccion)));
-                inputInvalid = false;
-            } 
-        } while (inputInvalid);
+                } while(mecanicos.size() > 0 && Integer.parseInt(seleccion) >= 0 && Integer.parseInt(seleccion) < mecanicos.size() &&
+                        userService.isBusy(mecanicos.get(Integer.parseInt(seleccion)), tarea.getDateTime()));
+
+                if (mecanicos.size() > 0 && Integer.parseInt(seleccion) >= 0 && Integer.parseInt(seleccion) < mecanicos.size()) {
+                    tarea.addMecanico(mecanicos.get(Integer.parseInt(seleccion)));
+                    inputInvalid = false;
+                } 
+            } while (inputInvalid);
 
 
-        // ADD ELEVADOR
-        inputInvalid = true;
-        System.out.println("Seleccione un elevador: ");
-        List<Elevador> elevadores = elevadorService.listAllElevadores();
-        do {
-            int index = 0;
-            for (Elevador e : elevadores) {
-                System.out.printf("%d ) %s \n", index, e.toString());
-                index++;
-            }
-            String seleccion =  readInput("Selección: ", "Seleccione un valor");
-            if (elevadores.size() > 0 && Integer.parseInt(seleccion) >= 0 && Integer.parseInt(seleccion) < elevadores.size()) {
-                tarea.setElevador(elevadores.get(Integer.parseInt(seleccion)));
-                inputInvalid = false;
-            }
-        } while (inputInvalid);
+            // ADD ELEVADOR
+            inputInvalid = true;
+            System.out.println("Seleccione un elevador: ");
+            List<Elevador> elevadores = elevadorService.listAllElevadores();
+            do {
+                int index = 0;
+                for (Elevador e : elevadores) {
+                    System.out.printf("%d ) %s \n", index, e.toString());
+                    index++;
+                }
+                String seleccion =  readInput("Selección: ", "Seleccione un valor");
+                if (elevadores.size() > 0 && Integer.parseInt(seleccion) >= 0 && Integer.parseInt(seleccion) < elevadores.size()) {
+                    tarea.setElevador(elevadores.get(Integer.parseInt(seleccion)));
+                    inputInvalid = false;
+                }
+            } while (inputInvalid);
+
+        }
 
         tareaService.insertTarea(tarea);
 
