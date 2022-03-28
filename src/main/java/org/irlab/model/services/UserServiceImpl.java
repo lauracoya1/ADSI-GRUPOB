@@ -28,6 +28,7 @@ import javax.annotation.Nonnull;
 import com.google.common.base.Preconditions;
 
 import org.irlab.common.AppEntityManagerFactory;
+import org.irlab.model.daos.TareaDao;
 import org.irlab.model.daos.UserDao;
 import org.irlab.model.entities.Role;
 import org.irlab.model.entities.Tarea;
@@ -147,7 +148,7 @@ public class UserServiceImpl implements UserService {
 
             //En funcion del rol mostraremos
             if (u.getRole().getRoleName().equals("admin")){ //Las tareas de todos los usuarios para esa fecha
-                tareaList = UserDao.getAllTareas(em);
+                tareaList = TareaDao.getAllTareas(em);
             }
             if (u.getRole().getRoleName().equals("tech")){ //Sus propias tareas para esa fecha
                 tareaList = UserDao.getTareasUser(em, u);
