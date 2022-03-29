@@ -407,7 +407,34 @@ public class App {
 
         return elevador;
     }
+    private static Trabajo addTrabajo(Vehiculo vehiculo){
+        Trabajo trabajo = new Trabajo();
+        trabajo.setVehiculo(vehiculo);
+        List<User> mecanicos = userService.listAllMecanicos();
+        System.out.println("Seleccione un mecanico");
+        boolean inputInvalid = true;
+        do {
+            int index = 0;
+            for (User u : mecanicos){
+                System.out.printf("%d ) %s \n", index, u.toString());
+                index++;
+            }
+            System.out.println("n ) Nuevo mecanico");
+            String seleccion =  readInput("Seleccione un mecanico: ", "Seleccione un valor");
 
+            if (seleccion.equals("n")) {
+                trabajo.setResponsable(addUser());
+                inputInvalid = false;
+            } else if (mecanicos.size() > 0 && Integer.parseInt(seleccion) >= 0 && Integer.parseInt(seleccion) < mecanicos.size()) {
+                trabajo.setResponsable(mecanicos.get(Integer.parseInt(seleccion)));
+                inputInvalid = false;
+            }
+        } while (inputInvalid);
+
+        trabajoService.insertTrabajo(trabajo);
+
+        return trabajo;
+    }
     private static User addUser() {
         boolean exists = true;
         String nombre, dni;
@@ -542,7 +569,7 @@ public class App {
             String seleccion =  readInput("Seleccione Trabajo: ", "Seleccione un valor");
 
             if (seleccion.equals("n")) {
-                //tarea.setTrabajo(addTrabajo());
+                tarea.setTrabajo(addTrabajo(tarea.getVehiculo()));
                 inputInvalid = false;
             }else if (trabajos.size() > 0 && Integer.parseInt(seleccion) >= 0 && Integer.parseInt(seleccion) < trabajos.size()) {
                 tarea.setTrabajo(trabajos.get(Integer.parseInt(seleccion)));
@@ -667,7 +694,7 @@ public class App {
                     System.out.println("  Tipo de tarea: " + tarea.getTipo());
                     System.out.println("  Hora de inicio: " + tarea.getDateTime());
                     System.out.println("  Lugar: Elevador " + tarea.getElevador().getCodigo());
-                    System.out.println("  Vehiculo con matrícula: " + tarea.getVehiculo().getMatricula());
+                    System.out.println("  Vehiculo con matrícula: " + t.getVehiculo().getMatricula());
                     System.out.println("  Mecanicos:");
 
                     for (User u: tarea.getMecanicos()) {
