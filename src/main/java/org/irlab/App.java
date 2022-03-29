@@ -301,7 +301,7 @@ public class App {
         return cliente;
     }
 
-    private static Vehiculo addVehiculo() {
+    private static Vehiculo addVehiculo(Cliente client) {
         boolean exists = true;
         String matricula;
         do {
@@ -318,28 +318,30 @@ public class App {
         Vehiculo vehiculo = new Vehiculo(matricula);
         vehiculo.setTipo(tipo);
 
+        if (client == null) {
+            List<Cliente> clientes = clientService.listAllClients();
+            boolean inputInvalid = true;
+            do {
+                int index = 0;
+                for (Cliente cliente : clientes) {
+                    System.out.printf("%d ) %s \n", index, cliente.toString());
+                    index++;
+                }
+                System.out.println(" n ) Nuevo cliente");
+                String seleccion = readInput("Selección: ", "Seleccione un valor");
 
-        List<Cliente> clientes = clientService.listAllClients();
-        boolean inputInvalid = true;
-        do {
-            int index = 0;
-            for (Cliente cliente : clientes) {
-                System.out.printf("%d ) %s \n", index, cliente.toString());
-                index++;
-            }
-            System.out.println(" n ) Nuevo cliente");
-            String seleccion = readInput("Selección: ", "Seleccione un valor");
+                if (seleccion.equals("n")) {
 
-            if (seleccion.equals("n")) {
-
-                vehiculo.setCliente(addClient());
-                inputInvalid = false;
-            } else if (clientes.size() > 0 && Integer.parseInt(seleccion) >= 0 && Integer.parseInt(seleccion) < clientes.size()) {
-                vehiculo.setCliente(clientes.get(Integer.parseInt(seleccion)));
-                inputInvalid = false;
-            }
-        } while (inputInvalid);
-
+                    vehiculo.setCliente(addClient());
+                    inputInvalid = false;
+                } else if (clientes.size() > 0 && Integer.parseInt(seleccion) >= 0 && Integer.parseInt(seleccion) < clientes.size()) {
+                    vehiculo.setCliente(clientes.get(Integer.parseInt(seleccion)));
+                    inputInvalid = false;
+                }
+            } while (inputInvalid);
+        }else{
+            vehiculo.setCliente(client);
+        }
 
         vehiculoService.insertVehiculo(vehiculo);
 
@@ -516,7 +518,7 @@ public class App {
             String seleccion =  readInput("Seleccione un vehiculo: ", "Seleccione un valor");
 
             if (seleccion.equals("n")) {
-                tarea.setVehiculo(addVehiculo());
+                tarea.setVehiculo(addVehiculo(cliente));
                 inputInvalid = false;
             } else if (vehiculos.size() > 0 && Integer.parseInt(seleccion) >= 0 && Integer.parseInt(seleccion) < vehiculos.size()) {
                 tarea.setVehiculo(vehiculos.get(Integer.parseInt(seleccion)));
@@ -701,7 +703,7 @@ public class App {
                     addClient();
                     break;
                 case ADD_VEHICLE:
-                    addVehiculo();
+                    addVehiculo(null);
                     break;
                 case ADD_TYPE:
                     addTipo();
